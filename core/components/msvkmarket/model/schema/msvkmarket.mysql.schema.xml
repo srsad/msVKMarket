@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- перегинерировать -->
+<model package="msvkmarket" baseClass="xPDOObject" platform="mysql" defaultEngine="MyISAM" version="1.1">
+    <object class="VkmCompilation" table="vkm_compilation" extends="xPDOSimpleObject">
+        <field key="name" dbtype="varchar" precision="255" phptype="string" null="false" />
+        <field key="group_id" dbtype="int" precision="11" phptype="integer" null="false" index="index" />
+        <field key="album_id" dbtype="int" precision="11" phptype="integer" null="false" />
+        <field key="image" dbtype="varchar" precision="2555" phptype="string" null="false" />
+
+        <index alias="group_id" name="group_id" primary="false" unique="false" type="BTREE" >
+            <column key="group_id" length="" collation="A" null="false" />
+        </index>
+        <index alias="name" name="name" primary="false" unique="false" type="BTREE" >
+            <column key="name" length="" collation="A" null="false" />
+        </index>
+
+        <aggregate alias="VkmGroups" class="VkmGroups" local="group_id" foreign="id" cardinality="one" owner="foreign" />
+        <composite alias="VkmProductCategories" class="VkmProductCategories" local="id" foreign="compilation_id" cardinality="many" owner="local" />
+    </object>
+    <object class="VkmGroups" table="vkm_groups" extends="xPDOSimpleObject">
+        <field key="name" dbtype="varchar" precision="255" phptype="string" null="false" />
+        <field key="app_id" dbtype="varchar" precision="255" phptype="string" null="false" />
+        <field key="secretkey" dbtype="varchar" precision="255" phptype="string" null="false" />
+        <field key="token" dbtype="varchar" precision="255" phptype="string" null="false" />
+        <field key="group_id" dbtype="int" precision="11" phptype="integer" null="false" index="index" />
+        <field key="status" dbtype="tinyint" precision="1" phptype="integer" null="false" default="1" index="index" />
+
+        <index alias="group_id" name="group_id" primary="false" unique="false" type="BTREE" >
+            <column key="group_id" length="" collation="A" null="false" />
+        </index>
+        <index alias="name" name="name" primary="false" unique="false" type="BTREE" >
+            <column key="name" length="" collation="A" null="false" />
+        </index>
+        <index alias="group_id" name="group_id" primary="false" unique="false" type="BTREE" >
+            <column key="group_id" length="" collation="A" null="false" />
+        </index>
+        <index alias="status" name="status" primary="false" unique="false" type="BTREE" >
+            <column key="status" length="" collation="A" null="false" />
+        </index>
+        <composite alias="VkmCompilation" class="VkmCompilation" local="id" foreign="group_id" cardinality="many" owner="local" />
+        <composite alias="VkmProductCategories" class="VkmProductCategories" local="id" foreign="groups_id" cardinality="many" owner="local" />
+    </object>
+    <object class="VkmProduct" table="vkm_product" extends="xPDOObject">
+        <field key="product_id" dbtype="int" precision="11" attributes="unsigned" phptype="integer" null="false" index="pk" />
+        <field key="product_status" dbtype="tinyint" precision="1" phptype="integer" null="false" index="index" />
+        <field key="image_sync" dbtype="tinyint" precision="1" phptype="integer" null="false" index="index" />
+        <field key="published" dbtype="tinyint" precision="1" phptype="integer" null="false" index="index" />
+        <field key="date_sync" dbtype="datetime" phptype="datetime" null="false" />
+
+        <index alias="PRIMARY" name="PRIMARY" primary="true" unique="true" type="BTREE" >
+            <column key="product_id" length="" collation="A" null="false" />
+        </index>
+        <index alias="image_sync" name="image_sync" primary="false" unique="false" type="BTREE" >
+            <column key="image_sync" length="" collation="A" null="false" />
+        </index>
+        <index alias="product_id" name="product_id" primary="false" unique="false" type="BTREE" >
+            <column key="product_id" length="" collation="A" null="false" />
+        </index>
+        <index alias="product_status" name="product_status" primary="false" unique="false" type="BTREE" >
+            <column key="product_status" length="" collation="A" null="false" />
+        </index>
+        <index alias="published" name="published" primary="false" unique="false" type="BTREE" >
+            <column key="published" length="" collation="A" null="false" />
+        </index>
+        <composite alias="VkmProductCategories" class="VkmProductCategories" local="product_id" foreign="product_id" cardinality="many" owner="local" />
+    </object>
+    <object class="VkmProductCategories" table="vkm_product_categories" extends="xPDOSimpleObject">
+        <field key="product_id" dbtype="int" precision="11" phptype="integer" null="false" index="index" />
+        <field key="groups_id" dbtype="int" precision="1" phptype="integer" null="false" index="index" />
+        <field key="compilation_id" dbtype="varchar" precision="255" phptype="string" null="true" />
+        <field key="product_status_sinc" dbtype="tinyint" precision="1" phptype="integer" null="false" index="index" />
+        <field key="owner_id" dbtype="int" precision="11" phptype="integer" null="false" index="index" />
+        <field key="category_id" dbtype="int" precision="11" phptype="integer" null="false" />
+        <field key="main_photo_id" dbtype="varchar" precision="255" phptype="string" null="false" />
+        <field key="photo_ids" dbtype="varchar" precision="255" phptype="string" null="false" />
+
+        <index alias="compilation_id" name="compilation_id" primary="false" unique="false" type="BTREE" >
+            <column key="compilation_id" length="" collation="A" null="false" />
+        </index>
+        <index alias="product_id" name="product_id" primary="false" unique="false" type="BTREE" >
+            <column key="product_id" length="" collation="A" null="false" />
+        </index>
+        <index alias="groups_id" name="groups_id" primary="false" unique="false" type="BTREE" >
+            <column key="groups_id" length="" collation="A" null="false" />
+        </index>
+        <index alias="product_status_sinc" name="product_status_sinc" primary="false" unique="false" type="BTREE" >
+            <column key="product_status_sinc" length="" collation="A" null="false" />
+        </index>
+        <index alias="compilation_id_2" name="compilation_id_2" primary="false" unique="false" type="BTREE" >
+            <column key="compilation_id" length="" collation="A" null="false" />
+        </index>
+        <index alias="product_id_2" name="product_id_2" primary="false" unique="false" type="BTREE" >
+            <column key="product_id" length="" collation="A" null="false" />
+        </index>
+        <index alias="groups_id_2" name="groups_id_2" primary="false" unique="false" type="BTREE" >
+            <column key="groups_id" length="" collation="A" null="false" />
+        </index>
+        <index alias="owner_id" name="owner_id" primary="false" unique="false" type="BTREE" >
+            <column key="owner_id" length="" collation="A" null="false" />
+        </index>
+        <aggregate alias="VkmCompilation" class="VkmCompilation" local="compilation_id" foreign="id" cardinality="one" owner="foreign" />
+        <aggregate alias="VkmGroups" class="VkmGroups" local="groups_id" foreign="id" cardinality="one" owner="foreign" />
+        <aggregate alias="VkmProduct" class="VkmProduct" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />
+    </object>
+</model>
