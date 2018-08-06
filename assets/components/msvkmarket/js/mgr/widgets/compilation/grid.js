@@ -3,19 +3,22 @@ msVKMarket.grid.Compilation = function (config) {
     if (!config.id) {
         config.id = 'msvkmarket-grid-compilation';
     }
+
+    this.sm = new Ext.grid.CheckboxSelectionModel();
+
     Ext.applyIf(config, {
         url: msVKMarket.config.connector_url,
         fields: this.getFields(config),
         columns: this.getColumns(config),
         tbar: this.getTopBar(config),
-        sm: new Ext.grid.CheckboxSelectionModel(),
+        sm: this.sm,
         baseParams: {
             action: 'mgr/compilation/getlist'
         },
         listeners: {
             rowDblClick: function (grid, rowIndex, e) {
                 var row = grid.store.getAt(rowIndex);
-                this.updateItem(grid, e, row);
+                this.updateCompilation(grid, e, row);
             }
         },
         viewConfig: {
@@ -32,7 +35,7 @@ msVKMarket.grid.Compilation = function (config) {
         },
         paging: true,
         remoteSort: true,
-        autoHeight: true,
+        autoHeight: true
     });
     msVKMarket.grid.Compilation.superclass.constructor.call(this, config);
 
@@ -55,7 +58,7 @@ Ext.extend(msVKMarket.grid.Compilation, MODx.grid.Grid, {
         this.addContextMenuItem(menu);
     },
 
-    createItem: function (btn, e) {
+    createCompilation: function (btn, e) {
         var w = MODx.load({
             xtype: 'msvkmarket-compilation-window-create',
             id: Ext.id(),
@@ -72,7 +75,7 @@ Ext.extend(msVKMarket.grid.Compilation, MODx.grid.Grid, {
         w.show(e.target);
     },
 
-    updateItem: function (btn, e, row) {
+    updateCompilation: function (btn, e, row) {
         if (typeof(row) != 'undefined') {
             this.menu.record = row.data;
         }
@@ -111,7 +114,7 @@ Ext.extend(msVKMarket.grid.Compilation, MODx.grid.Grid, {
         });
     },
 
-    removeItem: function () {
+    removeCompilation: function () {
         var ids = this._getSelectedIds();
         if (!ids.length) {
             return false;
@@ -144,7 +147,8 @@ Ext.extend(msVKMarket.grid.Compilation, MODx.grid.Grid, {
     },
 
     getColumns: function () {
-        return [{
+        return [
+            this.sm, {
             header: _('msvkmarket_item_id'),
             dataIndex: 'id',
             sortable: true,
@@ -153,17 +157,12 @@ Ext.extend(msVKMarket.grid.Compilation, MODx.grid.Grid, {
             header: _('msvkmarket_item_name'),
             dataIndex: 'name',
             sortable: true,
-            width: 200,
+            width: 200
         }, {
-            header: _('msvkmarket_item_description'),
+            header: _('msvkmarket_compilation_group_name'),
             dataIndex: 'group_id',
             sortable: false,
-            width: 250,
-        }, {
-            header: _('msvkmarket_item_description'),
-            dataIndex: 'album_id',
-            sortable: false,
-            width: 250,
+            width: 250
         }, {
             header: _('msvkmarket_grid_actions'),
             dataIndex: 'actions',
@@ -176,8 +175,12 @@ Ext.extend(msVKMarket.grid.Compilation, MODx.grid.Grid, {
 
     getTopBar: function () {
         return [{
-            text: '<i class="icon icon-plus"></i>&nbsp;' + _('msvkmarket_item_create'),
-            handler: this.createItem,
+            text: '<i class="icon icon-plus" style="margin-right:7px"></i>' + _('msvkmarket_compilation_create'),
+            handler: this.createCompilation,
+            scope: this
+        },{
+            text: '<i class="icon icon-download" style="margin-right:7px"></i>' + _('msvkmarket_compilation_export'),
+            handler: this.exportCompilation,
             scope: this
         }, '->', {
             xtype: 'msvkmarket-field-search',
@@ -193,9 +196,13 @@ Ext.extend(msVKMarket.grid.Compilation, MODx.grid.Grid, {
                         field.setValue('');
                         this._clearSearch();
                     }, scope: this
-                },
+                }
             }
         }];
+    },
+
+    exportCompilation: function () {
+        console.log('export');
     },
 
     onClick: function (e) {
