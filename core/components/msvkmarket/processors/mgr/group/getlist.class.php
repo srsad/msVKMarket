@@ -34,10 +34,14 @@ class msVKMarketGroupGetListProcessor extends modObjectGetListProcessor
     public function prepareQueryBeforeCount(xPDOQuery $c)
     {
         $query = trim($this->getProperty('query'));
+        $where = trim($this->getProperty('where'));
+
         if ($query) {
             $c->where([
                 'name:LIKE' => "%{$query}%"
             ]);
+        } elseif (!empty($where)) {
+            $c->where(json_decode($where, true));
         }
 
         return $c;
