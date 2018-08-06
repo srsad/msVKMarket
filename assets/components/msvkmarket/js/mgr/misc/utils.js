@@ -50,7 +50,7 @@ msVKMarket.utils.getMenu = function (actions, grid, selected) {
         menu.push({
             handler: action,
             text: String.format(
-                '<span class="{0}"><i class="x-menu-manager-icon {1}"></i>{2}</span>',
+                '<span class="{0}"><i class="x-menu-item-icon {1}"></i>{2}</span>',
                 cls, icon, title
             ),
             scope: grid
@@ -61,6 +61,7 @@ msVKMarket.utils.getMenu = function (actions, grid, selected) {
 };
 
 msVKMarket.utils.renderActions = function (value, props, row) {
+
     var res = [];
     var cls, icon, title, action, item;
     for (var i in row.data.actions) {

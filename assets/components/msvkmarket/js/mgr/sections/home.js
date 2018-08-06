@@ -1,4 +1,3 @@
-console.log('connnect');
 msVKMarket.page.Home = function (config) {
     config = config || {};
     Ext.applyIf(config, {
