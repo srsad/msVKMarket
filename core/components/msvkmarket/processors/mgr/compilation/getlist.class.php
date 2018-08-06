@@ -60,7 +60,7 @@ class msVKMarketGroupGetListProcessor extends modObjectGetListProcessor
             'icon' => 'icon icon-edit',
             'title' => $this->modx->lexicon('msvkmarket_item_update'),
             //'multiple' => $this->modx->lexicon('msvkmarket_groups_update'),
-            'action' => 'updateGroup',
+            'action' => 'updateCompilation',
             'button' => true,
             'menu' => true,
         ];
@@ -71,7 +71,7 @@ class msVKMarketGroupGetListProcessor extends modObjectGetListProcessor
                 'icon' => 'icon icon-power-off action-green',
                 'title' => $this->modx->lexicon('msvkmarket_item_enable'),
                 'multiple' => $this->modx->lexicon('msvkmarket_item_enable'),
-                'action' => 'enableGroup',
+                'action' => 'enableCompilation',
                 'button' => true,
                 'menu' => true,
             ];
@@ -81,7 +81,7 @@ class msVKMarketGroupGetListProcessor extends modObjectGetListProcessor
                 'icon' => 'icon icon-power-off action-gray',
                 'title' => $this->modx->lexicon('msvkmarket_item_disable'),
                 'multiple' => $this->modx->lexicon('msvkmarket_items_disable'),
-                'action' => 'disableGroup',
+                'action' => 'disableCompilation',
                 'button' => true,
                 'menu' => true,
             ];
@@ -93,7 +93,7 @@ class msVKMarketGroupGetListProcessor extends modObjectGetListProcessor
             'icon' => 'icon icon-trash-o action-red',
             'title' => $this->modx->lexicon('msvkmarket_item_remove'),
             'multiple' => $this->modx->lexicon('msvkmarket_items_remove'),
-            'action' => 'removeGroup',
+            'action' => 'removeCompilation',
             'button' => true,
             'menu' => true,
         ];
