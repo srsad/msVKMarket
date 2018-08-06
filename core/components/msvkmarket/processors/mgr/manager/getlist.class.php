@@ -6,8 +6,6 @@ class msVKMarketItemGetListProcessor extends modObjectGetListProcessor
     public $classKey = 'msVKMarket';
     public $defaultSortField = 'id';
     public $defaultSortDirection = 'DESC';
-    //public $permission = 'list';
-
 
     /**
      * We do a special check of permissions

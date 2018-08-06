@@ -5,8 +5,6 @@ class msVKMarketItemGetProcessor extends modObjectGetProcessor
     public $objectType = 'msVKMarketItem';
     public $classKey = 'msVKMarketItem';
     public $languageTopics = ['msvkmarket:default'];
-    //public $permission = 'view';
-
 
     /**
      * We doing special check of permission

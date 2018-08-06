@@ -1,7 +1,7 @@
 msVKMarket.grid.Items = function (config) {
     config = config || {};
     if (!config.id) {
-        config.id = 'msvkmarket-grid-items';
+        config.id = 'msvkmarket-grid-item';
     }
     Ext.applyIf(config, {
         url: msVKMarket.config.connector_url,
@@ -10,7 +10,7 @@ msVKMarket.grid.Items = function (config) {
         tbar: this.getTopBar(config),
         sm: new Ext.grid.CheckboxSelectionModel(),
         baseParams: {
-            action: 'mgr/manager/getlist'
+            action: 'mgr/item/getlist'
         },
         listeners: {
             rowDblClick: function (grid, rowIndex, e) {
@@ -284,4 +284,4 @@ Ext.extend(msVKMarket.grid.Items, MODx.grid.Grid, {
         this.getBottomToolbar().changePage(1);
     }
 });
-Ext.reg('msvkmarket-grid-items', msVKMarket.grid.Items);
+Ext.reg('msvkmarket-grid-item', msVKMarket.grid.Items);

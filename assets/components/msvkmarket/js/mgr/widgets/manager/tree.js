@@ -1,12 +1,9 @@
-console.log('tree');
+
 msVKMarket.tree.Categories = function (config) {
     config = config || {};
     if (!config.id) {
         config.id = 'msvkmarket-tree';
     }
-
-    console.log(msVKMarket.config.connector_url);
-    console.log(config);
 
     Ext.applyIf(config, {
         url: msVKMarket.config.connector_url,
