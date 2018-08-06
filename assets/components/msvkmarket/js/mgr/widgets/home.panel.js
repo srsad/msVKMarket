@@ -26,11 +26,9 @@ msVKMarket.panel.Home = function (config) {
                     html: _('msvkmarket_intro_msg'),
                     cls: 'panel-desc'
                 }, {
-                    //xtype: 'msvkmarket-grid-items',
                     layout: 'column',
                     cls: 'main-wrapper',
                     items: [{
-                        //html: 'tree',
                         xtype: 'msvkmarket-tree-categories',
                         //optionGrid: 'vkmarket-grid-goods',
                         columnWidth: .25
@@ -57,8 +55,8 @@ msVKMarket.panel.Home = function (config) {
                     html: _('msvkmarket_intro_msg'),
                     cls: 'panel-desc'
                 }, {
+                    xtype: 'msvkmarket-grid-compilation',
                     //xtype: 'msvkmarket-grid-items',
-                    html: 'Подборки',
                     cls: 'main-wrapper'
                 }]
             }]

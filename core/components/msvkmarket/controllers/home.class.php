@@ -65,12 +65,14 @@ class msVKMarketHomeManagerController extends modExtraManagerController
         $this->addJavascript($this->msVKMarket->config['jsUrl'] . 'mgr/widgets/group/grid.js?time=' . time());
         $this->addJavascript($this->msVKMarket->config['jsUrl'] . 'mgr/widgets/group/window.js?time=' . time());
 
+        $this->addJavascript($this->msVKMarket->config['jsUrl'] . 'mgr/widgets/compilation/grid.js?time=' . time());
+        $this->addJavascript($this->msVKMarket->config['jsUrl'] . 'mgr/widgets/compilation/window.js?time=' . time());
+
         $this->addJavascript($this->msVKMarket->config['jsUrl'] . 'mgr/widgets/home.panel.js?time=' . time());
         $this->addJavascript($this->msVKMarket->config['jsUrl'] . 'mgr/sections/home.js?time=' . time());
 
         $this->addHtml('<script type="text/javascript">
         msVKMarket.config = ' . json_encode($this->msVKMarket->config) . ';
-        console.log(msVKMarket.config);
         msVKMarket.config.connector_url = "' . $this->msVKMarket->config['connectorUrl'] . '";
         Ext.onReady(function() {MODx.load({ xtype: "msvkmarket-page-home"});});
         </script>');
