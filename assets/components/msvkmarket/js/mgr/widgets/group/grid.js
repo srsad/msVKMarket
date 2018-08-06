@@ -1,23 +1,24 @@
-console.log('grid group');
 msVKMarket.grid.Group = function (config) {
   config = config || {};
   if(!config.id){
       config.id = 'msvkmarket-grid-group';
   }
 
+  this.sm = new Ext.grid.CheckboxSelectionModel();
+
   Ext.applyIf(config, {
       url: msVKMarket.config.connector_url,
       fields: this.getFields(config),
       columns: this.getColumns(config),
       tbar: this.getTopBar(config),
-      sm: new Ext.grid.CheckboxSelectionModel(),
+      sm: this.sm,
       baseParams: {
           action: 'mgr/group/getlist'
       },
       listeners: {
           rowDblClick: function (grid, rowIndex, e) {
               var row = grid.store.getAt(rowIndex);
-              this.updateItem(grid, e, row);
+              this.updateGroup(grid, e, row);
           }
       },
       viewConfig: {
@@ -47,7 +48,7 @@ msVKMarket.grid.Group = function (config) {
     }, this);
 
 };
-Ext.extend(msVKMarket.grid.Items, MODx.grid.Grid, {
+Ext.extend(msVKMarket.grid.Group, MODx.grid.Grid, {
     windows: {},
     getMenu: function (grid, rowIndex) {
         var ids = this._getSelectedIds();
@@ -58,9 +59,7 @@ Ext.extend(msVKMarket.grid.Items, MODx.grid.Grid, {
         this.addContextMenuItem(menu);
     },
 
-/*------------*/
-    createItem: function (btn, e) {
-        console.log('creat group');
+    creatGroup: function (btn, e) {
         var w = MODx.load({
             xtype: 'msvkmarket-group-window-create',
             id: Ext.id(),
@@ -77,7 +76,7 @@ Ext.extend(msVKMarket.grid.Items, MODx.grid.Grid, {
         w.show(e.target);
     },
 
-    updateItem: function (btn, e, row) {
+    updateGroup: function (btn, e, row) {
         if (typeof(row) != 'undefined') {
             this.menu.record = row.data;
         }
@@ -89,14 +88,14 @@ Ext.extend(msVKMarket.grid.Items, MODx.grid.Grid, {
         MODx.Ajax.request({
             url: this.config.url,
             params: {
-                action: 'mgr/manager/get',
+                action: 'mgr/group/get',
                 id: id
             },
             listeners: {
                 success: {
                     fn: function (r) {
                         var w = MODx.load({
-                            xtype: 'msvkmarket-item-window-update',
+                            xtype: 'msvkmarket-group-window-update',
                             id: Ext.id(),
                             record: r,
                             listeners: {
@@ -116,21 +115,21 @@ Ext.extend(msVKMarket.grid.Items, MODx.grid.Grid, {
         });
     },
 
-    removeItem: function () {
+    removeGroup: function () {
         var ids = this._getSelectedIds();
         if (!ids.length) {
             return false;
         }
         MODx.msg.confirm({
             title: ids.length > 1
-                ? _('msvkmarket_items_remove')
-                : _('msvkmarket_item_remove'),
+                ? _('msvkmarket_groups_remove')
+                : _('msvkmarket_group_remove'),
             text: ids.length > 1
-                ? _('msvkmarket_items_remove_confirm')
-                : _('msvkmarket_item_remove_confirm'),
+                ? _('msvkmarket_groups_remove_confirm')
+                : _('msvkmarket_group_remove_confirm'),
             url: this.config.url,
             params: {
-                action: 'mgr/manager/remove',
+                action: 'mgr/group/remove',
                 ids: Ext.util.JSON.encode(ids),
             },
             listeners: {
@@ -144,7 +143,7 @@ Ext.extend(msVKMarket.grid.Items, MODx.grid.Grid, {
         return true;
     },
 
-    disableItem: function () {
+    disableGroup: function () {
         var ids = this._getSelectedIds();
         if (!ids.length) {
             return false;
@@ -152,7 +151,7 @@ Ext.extend(msVKMarket.grid.Items, MODx.grid.Grid, {
         MODx.Ajax.request({
             url: this.config.url,
             params: {
-                action: 'mgr/manager/disable',
+                action: 'mgr/group/disable',
                 ids: Ext.util.JSON.encode(ids),
             },
             listeners: {
@@ -165,7 +164,7 @@ Ext.extend(msVKMarket.grid.Items, MODx.grid.Grid, {
         })
     },
 
-    enableItem: function () {
+    enableGroup: function () {
         var ids = this._getSelectedIds();
         if (!ids.length) {
             return false;
@@ -173,7 +172,7 @@ Ext.extend(msVKMarket.grid.Items, MODx.grid.Grid, {
         MODx.Ajax.request({
             url: this.config.url,
             params: {
-                action: 'mgr/manager/enable',
+                action: 'mgr/group/enable',
                 ids: Ext.util.JSON.encode(ids),
             },
             listeners: {
@@ -187,26 +186,27 @@ Ext.extend(msVKMarket.grid.Items, MODx.grid.Grid, {
     },
 
     getFields: function () {
-        return ['id', 'name', 'app_id', 'secretkey', 'token', 'group_id', 'status'];
+        return ['id', 'name', 'app_id', 'secretkey', 'token', 'group_id', 'status', 'actions'];
     },
 
     getColumns: function () {
-        return [{
+        return [
+            this.sm, {
             header: _('msvkmarket_item_id'),
             dataIndex: 'id',
             sortable: true,
-            width: 70
+            width: 50
         }, {
             header: _('msvkmarket_item_name'),
             dataIndex: 'name',
             sortable: true,
-            width: 200
+            width: 450
         }, {
             header: _('msvkmarket_item_active'),
-            dataIndex: 'active',
+            dataIndex: 'status',
             renderer: msVKMarket.utils.renderBoolean,
             sortable: true,
-            width: 100
+            width: 70
         }, {
             header: _('msvkmarket_grid_actions'),
             dataIndex: 'actions',
@@ -220,7 +220,7 @@ Ext.extend(msVKMarket.grid.Items, MODx.grid.Grid, {
     getTopBar: function () {
         return [{
             text: '<i class="icon icon-plus"></i>&nbsp;' + _('msvkmarket_group_create'),
-            handler: this.createItem,
+            handler: this.creatGroup,
             scope: this
         }, '->', {
             xtype: 'msvkmarket-field-search',
@@ -236,7 +236,7 @@ Ext.extend(msVKMarket.grid.Items, MODx.grid.Grid, {
                         field.setValue('');
                         this._clearSearch();
                     }, scope: this
-                },
+                }
             }
         }];
     },
@@ -259,7 +259,7 @@ Ext.extend(msVKMarket.grid.Items, MODx.grid.Grid, {
         }
         return this.processEvent('click', e);
     },
-/*----------*/
+
     _getSelectedIds: function () {
         var ids = [];
         var selected = this.getSelectionModel().getSelections();
@@ -283,7 +283,6 @@ Ext.extend(msVKMarket.grid.Items, MODx.grid.Grid, {
         this.getStore().baseParams.query = '';
         this.getBottomToolbar().changePage(1);
     }
+
 });
-Ext.reg('msvkmarket-grid-group', msVKMarket.grid.Items);
-
-
+Ext.reg('msvkmarket-grid-group', msVKMarket.grid.Group);
