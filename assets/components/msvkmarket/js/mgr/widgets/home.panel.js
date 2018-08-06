@@ -3,12 +3,6 @@ msVKMarket.panel.Home = function (config) {
     Ext.apply(config, {
         baseCls: 'modx-formpanel',
         layout: 'anchor',
-        /*
-         stateful: true,
-         stateId: 'msvkmarket-panel-home',
-         stateEvents: ['tabchange'],
-         getState:function() {return {activeTab:this.items.indexOf(this.getActiveTab())};},
-         */
         hideMode: 'offsets',
         items: [{
             html: '<h2>' + _('msvkmarket') + '</h2>',
@@ -42,7 +36,7 @@ msVKMarket.panel.Home = function (config) {
                 title: _('msvkmarket_groups'),
                 layout: 'anchor',
                 items: [{
-                    html: _('msvkmarket_intro_msg'),
+                    html: _('msvkmarket_group_intro_msg'),
                     cls: 'panel-desc'
                 }, {
                     xtype: 'msvkmarket-grid-group',
@@ -52,7 +46,7 @@ msVKMarket.panel.Home = function (config) {
                 title: _('msvkmarket_compilation'),
                 layout: 'anchor',
                 items: [{
-                    html: _('msvkmarket_intro_msg'),
+                    html: _('msvkmarket_compilation_intro_msg'),
                     cls: 'panel-desc'
                 }, {
                     xtype: 'msvkmarket-grid-compilation',
