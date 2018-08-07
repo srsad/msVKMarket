@@ -40,6 +40,9 @@ class msVKMarketGroupGetListProcessor extends modObjectGetListProcessor
             ]);
         }
 
+        $c->leftJoin('VkmGroups', 'VkmGroups', 'VkmCompilation.group_id = VkmGroups.id');
+        $c->select('`VkmCompilation`.*, `VkmGroups`.`name` AS groupname');
+
         return $c;
     }
 
@@ -59,7 +62,6 @@ class msVKMarketGroupGetListProcessor extends modObjectGetListProcessor
             'cls' => '',
             'icon' => 'icon icon-edit',
             'title' => $this->modx->lexicon('msvkmarket_item_update'),
-            //'multiple' => $this->modx->lexicon('msvkmarket_groups_update'),
             'action' => 'updateCompilation',
             'button' => true,
             'menu' => true,

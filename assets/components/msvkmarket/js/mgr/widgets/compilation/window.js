@@ -64,19 +64,19 @@ function getCompilationItems (config) {
     },{
         xtype: 'modx-combo',
         name: 'group_id',
+        hiddenName: 'group_id',
         displayField: 'name',
         valueField: 'id',
         fieldLabel: _('msvkmarket_group_select'),
-        emptyText: _('msvkmarket_group_select'),
-        editable: false,
         fields: ['id', 'name'],
         anchor: '99%',
+        emptyText: _('msvkmarket_group_select'),
         hideMode: 'offsets',
         url: msVKMarket.config.connector_url,
         baseParams: {
             action: 'mgr/group/getlist',
-            where: '{"status": "1"}',
-            combo: true
+            where: '{"status":"1"}'
         }
+
     }];
 }

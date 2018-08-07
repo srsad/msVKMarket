@@ -143,7 +143,7 @@ Ext.extend(msVKMarket.grid.Compilation, MODx.grid.Grid, {
     },
 
     getFields: function () {
-        return ['id', 'name', 'group_id', 'album_id', 'image', 'actions'];
+        return ['id', 'name', 'group_id', 'album_id', 'groupname', 'image', 'actions'];
     },
 
     getColumns: function () {
@@ -160,7 +160,8 @@ Ext.extend(msVKMarket.grid.Compilation, MODx.grid.Grid, {
             width: 200
         }, {
             header: _('msvkmarket_compilation_group_name'),
-            dataIndex: 'group_id',
+            //dataIndex: 'group_id',
+            dataIndex: 'groupname',
             sortable: false,
             width: 250
         }, {

@@ -33,7 +33,6 @@ $_lang['msvkmarket_group_id'] = 'id группы';
 $_lang['msvkmarket_group_app_id'] = 'app id';
 $_lang['msvkmarket_group_skey'] = 'Секретный ключ';
 $_lang['msvkmarket_group_token'] = 'Токен';
-
 $_lang['msvkmarket_group_select'] = 'Выберети группу';
 
 $_lang['msvkmarket_group_err_name'] = 'Укажите имя группы.';
@@ -82,4 +81,5 @@ $_lang['msvkmarket_compialtion_err_ae'] = 'Такая подборка в это
 $_lang['msvkmarket_compialtion_err_group_id'] = 'Укажите группу';
 $_lang['msvkmarket_compilation_err_ns'] = 'Подборка не найдена.';
 $_lang['msvkmarket_compilation_err_nf'] = 'Подборка не указана.';
+
 
