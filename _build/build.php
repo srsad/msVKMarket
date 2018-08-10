@@ -304,7 +304,7 @@ class msVKMarketPackage
                 'PluginEvents' => [
                     xPDOTransport::PRESERVE_KEYS => true,
                     xPDOTransport::UPDATE_OBJECT => true,
-                    xPDOTransport::UNIQUE_KEY => ['pluginid', 'event'],
+                    xPDOTransport::UNIQUE_KEY => ['pluginid', 'event.class'],
                 ],
             ],
         ];
@@ -328,7 +328,7 @@ class msVKMarketPackage
                     /** @var modPluginEvent $event */
                     $event = $this->modx->newObject('modPluginEvent');
                     $event->fromArray(array_merge([
-                        'event' => $event_name,
+                        'event.class' => $event_name,
                         'priority' => 0,
                         'propertyset' => 0,
                     ], $event_data), '', true, true);
