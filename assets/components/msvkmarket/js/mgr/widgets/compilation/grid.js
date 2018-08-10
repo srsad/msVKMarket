@@ -129,7 +129,7 @@ Ext.extend(msVKMarket.grid.Compilation, MODx.grid.Grid, {
             url: this.config.url,
             params: {
                 action: 'mgr/compilation/remove',
-                ids: Ext.util.JSON.encode(ids),
+                ids: Ext.util.JSON.encode(ids)
             },
             listeners: {
                 success: {
@@ -202,8 +202,20 @@ Ext.extend(msVKMarket.grid.Compilation, MODx.grid.Grid, {
         }];
     },
 
-    exportCompilation: function () {
-        console.log('export');
+    exportCompilation: function (btn, e) {
+        var w = MODx.load({
+            xtype: 'msvkmarket-compilation-window-export',
+            id: Ext.id(),
+            listeners: {
+                success: {
+                    fn: function () {
+                        this.refresh();
+                    }, scope: this
+                }
+            }
+        });
+        w.reset();
+        w.show(e.target);
     },
 
     onClick: function (e) {

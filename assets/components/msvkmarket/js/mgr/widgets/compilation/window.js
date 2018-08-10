@@ -49,6 +49,10 @@ Ext.extend(msVKMarket.window.UpdateCompilation, MODx.Window, {
             xtype: 'hidden',
             name: 'id',
             id: config.id + '-id'
+        },{
+            xtype: 'hidden',
+            name: 'album_id',
+            id: config.id + '-album_id'
         }, getCompilationItems(config)];
     }
 
@@ -76,7 +80,64 @@ function getCompilationItems (config) {
         baseParams: {
             action: 'mgr/group/getlist',
             where: '{"status":"1"}'
-        }
-
+        },
+        tpl:  '<tpl for="."><div class="x-combo-list-item"><span>({id})</span> - {name}</div></tpl>'
     }];
 }
+
+msVKMarket.window.ExportCompilation = function(config) {
+    config = config || {};
+    if (!config.id) {
+        config.id = 'msvkmarket-compilation-window-export';
+    }
+    Ext.applyIf(config, {
+        title: _('msvkmarket_item_export'),
+        width: 300,
+        url: msVKMarket.config.connector_url,
+        action: 'mgr/compilation/export',
+        autoHeight: true,
+        fields: {
+            xtype: 'modx-combo',
+            name: 'id',
+            hiddenName: 'id',
+            displayField: 'name',
+            valueField: 'id',
+            fieldLabel: _('msvkmarket_group_select'),
+            fields: ['id', 'name'],
+            anchor: '99%',
+            emptyText: _('msvkmarket_group_select'),
+            hideMode: 'offsets',
+            url: msVKMarket.config.connector_url,
+            baseParams: {
+                action: 'mgr/group/getlist',
+                where: '{"status":"1"}'
+            },
+            tpl:  '<tpl for="."><div class="x-combo-list-item"><span>({id})</span> - {name}</div></tpl>'
+        },
+        buttons: [{
+            text: config.cancelBtnText || _('cancel'),
+            handler: function() { config.closeAction !== 'close' ? this.hide() : this.close(); },
+            scope: this
+        },{
+            text: '<i class="icon icon-download"></i> ' + _('msvkmarket_item_export'),
+            cls: 'primary-button',
+            anchor: '100%',
+            handler: this.submit,
+            scope: this
+        }],
+        listeners: {
+            success: {
+                fn: function(r){
+                    console.log(r);
+                }, scope: this
+            }
+        }
+    });
+    msVKMarket.window.ExportCompilation.superclass.constructor.call(this, config);
+};
+Ext.extend(msVKMarket.window.ExportCompilation, MODx.Window, {
+    exportCompilation: function (config) {
+        console.log('export sadsad');
+    }
+});
+Ext.reg('msvkmarket-compilation-window-export', msVKMarket.window.ExportCompilation);
