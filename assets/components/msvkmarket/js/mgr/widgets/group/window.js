@@ -89,3 +89,11 @@ function getGroupItems (config){
         anchor: '100%'
     }];
 }
+
+/*
+MODx.msg.status({
+    title: _('banonip'),
+    message: r.results.message,
+    dontHide: true
+});
+*/

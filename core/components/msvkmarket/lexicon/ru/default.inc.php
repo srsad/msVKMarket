@@ -5,6 +5,7 @@ $_lang['msvkmarket'] = 'msVKMarket';
 $_lang['msvkmarket_menu_desc'] = 'Пример расширения для разработки.';
 $_lang['msvkmarket_intro_msg'] = 'Вы можете выделять сразу несколько предметов при помощи Shift или Ctrl.';
 
+$_lang['msvkmarket_success'] = 'Успешно';
 $_lang['msvkmarket_items'] = 'Предметы';
 $_lang['msvkmarket_item_id'] = 'Id';
 $_lang['msvkmarket_item_name'] = 'Название';
@@ -18,6 +19,7 @@ $_lang['msvkmarket_compilation'] = 'Подборки';
 $_lang['msvkmarket_compilation'] = 'Подборки';
 
 $_lang['msvkmarket_tree_update'] = 'Обновить';
+$_lang['msvkmarket_item_export'] = 'Экспорт';
 $_lang['msvkmarket_tree_expand'] = 'Раскрыть';
 $_lang['msvkmarket_tree_collapse'] = 'Скрыть';
 $_lang['msvkmarket_tree_select_all'] = 'Выбрать всё';
@@ -33,9 +35,10 @@ $_lang['msvkmarket_group_id'] = 'id группы';
 $_lang['msvkmarket_group_app_id'] = 'app id';
 $_lang['msvkmarket_group_skey'] = 'Секретный ключ';
 $_lang['msvkmarket_group_token'] = 'Токен';
-$_lang['msvkmarket_group_select'] = 'Выберети группу';
+$_lang['msvkmarket_group_select'] = 'Выберите группу';
 
 $_lang['msvkmarket_group_err_name'] = 'Укажите имя группы.';
+$_lang['msvkmarket_group_err_not_id'] = 'Не найдена группа в данным id.';
 $_lang['msvkmarket_group_err_group_id'] = 'Укажите id группы.';
 $_lang['msvkmarket_group_err_app_id'] = 'Укажите app_id группы.';
 $_lang['msvkmarket_group_err_secretkey'] = 'Укажите секретный ключь.';
@@ -77,9 +80,17 @@ $_lang['msvkmarket_compilation_group_name'] = 'Группа';
 $_lang['msvkmarket_compilation_export'] = 'Экспорт подборок';
 
 $_lang['msvkmarket_compialtion_err_name'] = 'Укажите имя подборки';
-$_lang['msvkmarket_compialtion_err_ae'] = 'Такая подборка в этой группе кже есть';
+$_lang['msvkmarket_compialtion_err_ae'] = 'Такая подборка в этой группе уже есть';
 $_lang['msvkmarket_compialtion_err_group_id'] = 'Укажите группу';
 $_lang['msvkmarket_compilation_err_ns'] = 'Подборка не найдена.';
-$_lang['msvkmarket_compilation_err_nf'] = 'Подборка не указана.';
 
+$_lang['msvkmarket_compilation_creat_albom_error'] = 'Ошибка при создании подборки.';
+$_lang['msvkmarket_compilation_creat_albom_error_log'] = 'Ошибка при создании подборки, проверте логи!';
+$_lang['msvkmarket_compilation_creat_albom_error_name'] = 'Не указанно имя подборки или id группы.';
+$_lang['msvkmarket_compilation_creat_albom_error_id'] = 'Не указанно id подборки или группа.';
+$_lang['msvkmarket_compilation_remove_albom_error'] = 'Ошибка при удалении подборки - [[+msg]]';
+
+$_lang['msvkmarket_connect_error'] = 'Ошибка при подключении к VK, событие [[+action]]!';
+
+$_lang['msvkmarketexport_albom_error'] = 'Ошибка экспорта ';
 
