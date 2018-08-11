@@ -85,20 +85,28 @@ function getCompilationItems (config) {
     }];
 }
 
+/* modx-combo
 msVKMarket.window.ExportCompilation = function(config) {
     config = config || {};
-    if (!config.id) {
-        config.id = 'msvkmarket-compilation-window-export';
-    }
     Ext.applyIf(config, {
-        title: _('msvkmarket_item_export'),
-        width: 300,
-        url: msVKMarket.config.connector_url,
-        action: 'mgr/compilation/export',
-        autoHeight: true,
-        fields: {
+        title: _('msvkm_option_export_albom')
+        ,buttons: [{
+            text: config.cancelBtnText || _('cancel')
+            ,handler: function() { config.closeAction !== 'close' ? this.hide() : this.close(); }
+            ,scope: this
+        },{
+            text: '<i class="icon icon-download"></i> ' + _('msvkmarket_item_export')
+            ,cls: 'primary-button'
+            ,anchor: '100%'
+            ,handler: this.export
+            ,scope: this
+        }]
+        ,id: 'msvkm_export_albom_form_' + Ext.id()
+        ,autoHeight: true
+        ,fields: [{
             xtype: 'modx-combo',
             name: 'id',
+            id: config.id + '-group_id',
             hiddenName: 'id',
             displayField: 'name',
             valueField: 'id',
@@ -113,31 +121,113 @@ msVKMarket.window.ExportCompilation = function(config) {
                 where: '{"status":"1"}'
             },
             tpl:  '<tpl for="."><div class="x-combo-list-item"><span>({id})</span> - {name}</div></tpl>'
-        },
-        buttons: [{
-            text: config.cancelBtnText || _('cancel'),
-            handler: function() { config.closeAction !== 'close' ? this.hide() : this.close(); },
-            scope: this
-        },{
-            text: '<i class="icon icon-download"></i> ' + _('msvkmarket_item_export'),
-            cls: 'primary-button',
-            anchor: '100%',
-            handler: this.submit,
-            scope: this
-        }],
-        listeners: {
-            success: {
-                fn: function(r){
-                    console.log(r);
-                }, scope: this
-            }
-        }
+        }]
+        ,url: msVKMarket.config.connector_url
+        ,action: 'mgr/compilation/export'
     });
     msVKMarket.window.ExportCompilation.superclass.constructor.call(this, config);
 };
-Ext.extend(msVKMarket.window.ExportCompilation, MODx.Window, {
-    exportCompilation: function (config) {
-        console.log('export sadsad');
+*/
+// superboxselect
+msVKMarket.window.ExportCompilation = function(config) {
+    config = config || {};
+    config.closeAction = 'close';
+
+    Ext.applyIf(config, {
+        title: _('msvkmarket_export')
+        ,id: Ext.id() + '-msvkmarket_export_albom'
+        ,autoHeight: true
+        ,fields: [{
+            xtype: 'combo-superselect-groups',
+            name: 'groups_id',
+            id: Ext.id() + 'groups_id'
+        }]
+        //,url: msVKMarket.config.connector_url
+        //,action: 'mgr/compilation/export'
+        ,buttons: [{
+            text: config.cancelBtnText || _('cancel')
+            ,handler: function() { config.closeAction !== 'close' ? this.hide() : this.close(); }
+            ,scope: this
+        },{
+            text: '<i class="icon icon-download"></i> ' + _('msvkmarket_export')
+            ,cls: 'primary-button'
+            ,anchor: '100%'
+            ,handler: this.export
+            ,scope: this
+        }]
+    });
+    msVKMarket.window.ExportCompilation.superclass.constructor.call(this, config);
+};
+Ext.extend(msVKMarket.window.ExportCompilation, MODx.Window,{
+    export: function () {
+        var groupids = Ext.getCmp(this.fields[0].id);
+        groupids = groupids.items.items;
+        var grid = Ext.getCmp('compilation-grid');
+        var ids = [];
+
+        for(var i = 0; i < groupids.length; i++){ ids.push(groupids[i].value); }
+        ids = ids.join(',');
+
+        if (ids === '') {return true;}
+        console.log(ids);
+        //this.close();
+        //var topic = '/mytopic/';
+        //var register = 'mgr';
+        var c = MODx.load({
+            xtype: 'modx-console'
+            //,register: register
+            ,topic: 'mgr/compilation/export'
+            ,show_filename: 0
+            ,listeners: {
+                'shutdown': {fn:function() {
+                        // do code here when you close the console
+                        console.log('shutdown');
+                        console.log(r);
+                    },scope:this},
+                'complete': {fn:function (r) {
+                        console.log('complete');
+                        console.log(r);
+                    }}
+            }
+        });
+        c.show(Ext.getBody());
+
+        /*
+        for(var i = 0; i < groupids.length; i++){ ids.push(groupids[i].value); }
+        ids = ids.join(',');
+        if (ids === '') {return true;}
+
+        var w = new msVKMarket.window.Console({
+            register	: 'mgr'
+            ,autoScroll	: true
+            ,baseParams	: {
+                action: 'mgr/compilation/export'
+                ,id: 	ids
+                ,step:	0
+            }
+        }).show();
+        w.log({message: _('msvkm_manager_export_start'), level: 3});
+        w.on('complete', function(){ this.scope.refresh(); });
+*/
     }
+
+
 });
 Ext.reg('msvkmarket-compilation-window-export', msVKMarket.window.ExportCompilation);
+
+/*
+var topic = '/mytopic/';
+var register = 'mgr';
+var console = MODx.load({
+    xtype: 'modx-console'
+    ,register: register
+    ,topic: topic
+    ,show_filename: 0
+    ,listeners: {
+        'shutdown': {fn:function() {
+                // do code here when you close the console
+            },scope:this}
+    }
+});
+console.show(Ext.getBody());
+*/

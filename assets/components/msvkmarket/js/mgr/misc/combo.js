@@ -46,3 +46,42 @@ Ext.extend(msVKMarket.combo.Search, Ext.form.TwinTriggerField, {
 });
 Ext.reg('msvkmarket-combo-search', msVKMarket.combo.Search);
 Ext.reg('msvkmarket-field-search', msVKMarket.combo.Search);
+
+msVKMarket.combo.Groups = function (config) {
+    config = config || {};
+    Ext.applyIf(config, {
+        xtype: 'superboxselect',
+        name: 'groups_id',
+        id: Ext.id() + '-groups_id',
+        msgTarget: 'under',
+        //allowAddNewData: true,
+        //addNewDataOnBlur: true,
+        //resizable: true,
+        //minChars: 1,
+        valueField: 'id',
+        store: new Ext.data.JsonStore({
+            root: 'results',
+            id: 'group-store',
+            autoLoad: false,
+            autoSave: false,
+            totalProperty: 'total',
+            fields: ['id', 'name'],
+            url: msVKMarket.config.connector_url,
+            baseParams: {
+                action: 'mgr/group/getlist',
+                where: '{"status":"1"}'
+            }
+        }),
+        //,tpl:  '<tpl for="."><div class="x-combo-list-item"><span>({id})</span> - {name}</div></tpl>'
+        mode: 'remote',
+        displayField: 'name',
+        triggerAction: 'all',
+        extraItemCls: 'x-tag',
+        expandBtnCls: 'x-form-trigger',
+        clearBtnCls: 'x-form-trigger'
+    });
+
+    msVKMarket.combo.Groups.superclass.constructor.call(this, config);
+};
+Ext.extend(msVKMarket.combo.Groups, Ext.ux.form.SuperBoxSelect); // SuperBoxSelect
+Ext.reg('combo-superselect-groups', msVKMarket.combo.Groups);

@@ -27,9 +27,10 @@ msVKMarket.panel.Home = function (config) {
                         //optionGrid: 'vkmarket-grid-goods',
                         columnWidth: .25
                     },{
-                        html: 'grid',
+                        //html: 'grid',
+                        xtype: 'combo-superselect-groups'
                         //xtype: 'vkmarket-grid-goods',
-                        columnWidth: .75
+                        ,columnWidth: .75
                     }]
                 }]
             },{

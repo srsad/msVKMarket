@@ -61,7 +61,7 @@ Ext.extend(msVKMarket.grid.Compilation, MODx.grid.Grid, {
     createCompilation: function (btn, e) {
         var w = MODx.load({
             xtype: 'msvkmarket-compilation-window-create',
-            id: Ext.id(),
+            id: Ext.id() + '-window-create',
             listeners: {
                 success: {
                     fn: function () {
@@ -95,7 +95,7 @@ Ext.extend(msVKMarket.grid.Compilation, MODx.grid.Grid, {
                     fn: function (r) {
                         var w = MODx.load({
                             xtype: 'msvkmarket-compilation-window-update',
-                            id: Ext.id(),
+                            id: Ext.id() + '-window-update',
                             record: r,
                             listeners: {
                                 success: {
@@ -181,7 +181,13 @@ Ext.extend(msVKMarket.grid.Compilation, MODx.grid.Grid, {
             scope: this
         },{
             text: '<i class="icon icon-download" style="margin-right:7px"></i>' + _('msvkmarket_compilation_export'),
-            handler: this.exportCompilation,
+            //handler: this.exportCompilation,
+            handler: function() {
+            var w = MODx.load({
+                        xtype: 'msvkmarket-compilation-window-export'
+                    });
+                    w.show();
+                },
             scope: this
         }, '->', {
             xtype: 'msvkmarket-field-search',
@@ -200,22 +206,6 @@ Ext.extend(msVKMarket.grid.Compilation, MODx.grid.Grid, {
                 }
             }
         }];
-    },
-
-    exportCompilation: function (btn, e) {
-        var w = MODx.load({
-            xtype: 'msvkmarket-compilation-window-export',
-            id: Ext.id(),
-            listeners: {
-                success: {
-                    fn: function () {
-                        this.refresh();
-                    }, scope: this
-                }
-            }
-        });
-        w.reset();
-        w.show(e.target);
     },
 
     onClick: function (e) {

@@ -12,10 +12,16 @@ class msVKMarketCompilationExportProcessor extends modObjectProcessor
 
     public function process()
     {
+        $this->modx->log(1, print_r($this->getProperties(), true));
+        /*
         $id = $this->getProperty('id');
         if (empty($id)) {
             return $this->failure($this->modx->lexicon('msvkmarket_group_select'));
-        }
+        }*/
+
+        $this->modx->log(modX::LOG_LEVEL_INFO,'An information message in normal colors.');
+        $this->modx->log(modX::LOG_LEVEL_ERROR,'An error in red!');
+        $this->modx->log(modX::LOG_LEVEL_WARN,'A warning in blue!');
 
         //return true;
         /*
