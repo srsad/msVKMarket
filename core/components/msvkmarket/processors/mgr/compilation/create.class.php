@@ -34,8 +34,8 @@ class msVKMarketCompilationCreateProcessor extends modObjectCreateProcessor
         if ($create_album['success'] == true) {
             $this->setProperty('album_id', $create_album['result']);
         } else {
-            $this->modx->log(1, 'Ошибка при создании из trait ' . print_r($create_album, true));
-            return $this->modx->lexicon('msvkmarket_compilation_creat_albom_error_log');
+            $this->modx->log(1, 'Ошибка при создании подборки ' . print_r($create_album, true));
+            return $create_album['result'];
         }
 
         return parent::beforeSet();

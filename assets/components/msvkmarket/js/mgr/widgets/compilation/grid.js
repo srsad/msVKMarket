@@ -152,7 +152,7 @@ Ext.extend(msVKMarket.grid.Compilation, MODx.grid.Grid, {
             header: _('msvkmarket_item_id'),
             dataIndex: 'id',
             sortable: true,
-            width: 70
+            width: 75
         }, {
             header: _('msvkmarket_item_name'),
             dataIndex: 'name',
@@ -162,14 +162,14 @@ Ext.extend(msVKMarket.grid.Compilation, MODx.grid.Grid, {
             header: _('msvkmarket_compilation_group_name'),
             //dataIndex: 'group_id',
             dataIndex: 'groupname',
-            sortable: false,
-            width: 250
+            sortable: true,
+            width: 150
         }, {
             header: _('msvkmarket_grid_actions'),
             dataIndex: 'actions',
             renderer: msVKMarket.utils.renderActions,
             sortable: false,
-            width: 100,
+            width: 75,
             id: 'actions'
         }];
     },

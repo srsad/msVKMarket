@@ -161,9 +161,10 @@ msVKMarket.window.ExportCompilation = function(config) {
 };
 Ext.extend(msVKMarket.window.ExportCompilation, MODx.Window,{
     export: function () {
+        var window = this;
         var groupids = Ext.getCmp(this.fields[0].id);
         groupids = groupids.items.items;
-        var grid = Ext.getCmp('compilation-grid');
+        var grid = Ext.getCmp('msvkmarket-grid-compilation');
         var ids = [];
 
         for(var i = 0; i < groupids.length; i++){ ids.push(groupids[i].value); }
@@ -180,8 +181,8 @@ Ext.extend(msVKMarket.window.ExportCompilation, MODx.Window,{
                 step: 0
             },
             updateQuery: function(){
-                var step     = this.baseParams.step;
-                var arrId    = this.baseParams.id;
+                var step  = this.baseParams.step;
+                var arrId = this.baseParams.id;
                 if (arrId != null) {
                     var arrSplit = arrId.split(',');
                     arrSplit.shift();
@@ -190,52 +191,11 @@ Ext.extend(msVKMarket.window.ExportCompilation, MODx.Window,{
                 this.baseParams.step = step+1;
             }, scope: grid
         }).show();
-        //w.log({message: _('msvkm_manager_export_start'), level: 3});
-        w.on('complete', function(){ /*this.scope.refresh();*/ });
-
-        /*
-        var register = 'mgr';
-        var topic = '/msvkmarket/';
-        var c = MODx.load({
-            xtype: 'modx-console'
-            ,register: register
-            ,topic: topic
-            ,clear: true
-            ,show_filename: 0
-            ,listeners: {
-                'add': {fn: function (r) {
-                        console.log('asdasd');
-                        console.log(r);
-                    }},
-                'shutdown': {fn:function() {
-                        console.log('shutdown');
-                        console.log(c);
-                    },scope:this},
-                'complete': {fn:function (r) {
-                        console.log('complete');
-                        console.log(r);
-                    }, scope: this}
-            }
+        w.log({message: _('msvkmarket_compilation_export'), level: 3});
+        w.on('complete', function(){
+            window.close();
+            grid.refresh();
         });
-        c.show(Ext.getBody());
-
-        MODx.Ajax.request({
-            url: msVKMarket.config.connector_url
-            ,params: {
-                action: 'mgr/compilation/export'
-                ,register: register
-                ,topic: topic
-                ,ids: ids
-            }
-            ,listeners: {
-                'success':{fn:function(r) {
-                        c.fireEvent('complete');
-                        console.log('---------------');
-                        console.log(r);
-                    }, scope:this}
-            }
-        });
-        */
 
     }
 

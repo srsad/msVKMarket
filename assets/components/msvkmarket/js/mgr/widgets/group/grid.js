@@ -102,6 +102,7 @@ Ext.extend(msVKMarket.grid.Group, MODx.grid.Grid, {
                                 success: {
                                     fn: function () {
                                         this.refresh();
+                                        Ext.getCmp('msvkmarket-grid-compilation').refresh();
                                     }, scope: this
                                 }
                             }
@@ -136,6 +137,7 @@ Ext.extend(msVKMarket.grid.Group, MODx.grid.Grid, {
                 success: {
                     fn: function () {
                         this.refresh();
+                        Ext.getCmp('msvkmarket-grid-compilation').refresh();
                     }, scope: this
                 }
             }
@@ -158,6 +160,7 @@ Ext.extend(msVKMarket.grid.Group, MODx.grid.Grid, {
                 success: {
                     fn: function () {
                         this.refresh();
+                        Ext.getCmp('msvkmarket-grid-compilation').refresh();
                     }, scope: this
                 }
             }
@@ -179,6 +182,7 @@ Ext.extend(msVKMarket.grid.Group, MODx.grid.Grid, {
                 success: {
                     fn: function () {
                         this.refresh();
+                        Ext.getCmp('msvkmarket-grid-compilation').refresh();
                     }, scope: this
                 }
             }

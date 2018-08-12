@@ -10,20 +10,21 @@ trait msVKMarketVKEventTrait
         $this->modx->log(modX::LOG_LEVEL_ERROR, 'test trait');
     }
 
+
     /**
      * Возвращаем параметры группы
      *
      * @param $group_id - group id
      * @return mixed
      */
-    private function getGroupParam($group_id)
+    public function getGroupParam($group_id)
     {
         $groups_cache = $this->modx->cacheManager->get('groups_data');
 
         if(@!array_key_exists($group_id, $groups_cache)){
             /** @var VkmGroups $items */
             $items = $this->modx->getCollection('VkmGroups', $group_id);
-            $groups = [];
+            $groups = array();
             foreach($items as $item){
                 $groups[$item->get('id')] = [
                     'id'        => $item->get('id'),
@@ -39,16 +40,17 @@ trait msVKMarketVKEventTrait
             $groups_cache = !is_array($groups_cache) ? $groups : $groups_cache + $groups;
 
             $this->modx->cacheManager->set('groups_data', $groups_cache);
+            $groups_cache = $this->modx->cacheManager->get('groups_data');
         }
 
-        $groups_cache = $this->modx->cacheManager->get('groups_data');
         if (array_key_exists($group_id, $groups_cache)){
-            #$this->modx->log(1, print_r($groups_cache, true));
+
             return $groups_cache[$group_id];
         }
 
         return false;
     }
+
 
     /**
      * Создание подборки в указанной группе
@@ -91,8 +93,17 @@ trait msVKMarketVKEventTrait
             // 'photo_id'  => ''
         ));
 
+        // todo разобраться с этой ошибкой (при отключанном интернете)
+        if (!isset($add_album['response']['market_album_id'])) {
+            $this->modx->log(1, '[msVKMarket] ' . $this->modx->lexicon('msvkmarket_compilation_create_album_error_album_id'));
+            return json_encode(array(
+                'success' => false,
+                'result' => $this->modx->lexicon('msvkmarket_compilation_create_album_error_album_id')
+            ));
+        }
+
         if (isset($add_album['error'])) {
-            $error = $this->modx->lexicon('msvkmarket_compilation_creat_albom_error_log');
+            $error = $this->modx->lexicon('msvkmarket_compilation_create_albom_error_log');
             $this->modx->log(1, '[msVKMarket] ' . print_r($add_album, 1));
             return json_encode(array(
                 'success' => false,
@@ -122,7 +133,7 @@ trait msVKMarketVKEventTrait
         if ($groups_param === false || empty($album_id)) {
             return json_encode(array(
                 'success' => false,
-                'result' => $this->modx->lexicon('msvkmarket_compilation_creat_albom_error_id')
+                'result' => $this->modx->lexicon('msvkmarket_compilation_create_albom_error_id')
             ));
         }
 
@@ -150,7 +161,7 @@ trait msVKMarketVKEventTrait
         ));
 
         if (isset($edit_album['error'])) {
-            $error[] = $this->modx->lexicon('msvkm_creat_albom_error_edit') . print_r($edit_album['error'], 1);
+            $error[] = $this->modx->lexicon('msvkm_create_albom_error_edit') . print_r($edit_album['error'], 1);
             $this->modx->log(1, '[msVKMarket] - ' . print_r($edit_album['error'], 1));
 
             return json_encode(array(
@@ -166,6 +177,7 @@ trait msVKMarketVKEventTrait
         ));
     }
 
+
     /**
      * Экспорт подборок
      *
@@ -174,7 +186,7 @@ trait msVKMarketVKEventTrait
      */
     public function exportAlbum($id_group)
     {
-        $groups_param   = $this->getGroupParam($id_group);
+        $groups_param = $this->getGroupParam($id_group);
 
         if ($groups_param === false) {
             return json_encode(array(
@@ -183,44 +195,61 @@ trait msVKMarketVKEventTrait
             ));
         }
 
-        $group_name     = $groups_param['name'];
-        $app_id         = $groups_param['app_id'];
-        $api_secret     = $groups_param['secretkey'];
-        $access_token   = $groups_param['token'];
-        $group_id       = $groups_param['group_id'];
-
         try {
-            $vk = new VK\VK($app_id, $api_secret, $access_token);
+            $vk = new VK\VK($groups_param['app_id'], $groups_param['secretkey'], $groups_param['token']);
             $vk->setApiVersion('5.59');
         }
         catch (VK\VKException $error) {
             $vk      = '';
-            $error[] = $this->modx->lexicon('msvkm_connect_error', array(
-                'action' => $this->modx->lexicon('msvkm_export_albom')
+            $error[] = $this->modx->lexicon('msvkmarket_connect_error', array(
+                'action' => 'market.getAlbums'
             ));
             $this->modx->log(modX::LOG_LEVEL_ERROR, print_r($error, 1));
         }
 
         $album_list = $vk->api('market.getAlbums', array(
-            'owner_id' => '-' . $group_id,
+            'owner_id' => '-' . $groups_param['group_id'],
             'count' => 100
         ));
 
         if (isset($album_list['error'])) {
-            $error[] = $this->modx->lexicon('msvkmarketexport_albom_error') . print_r($album_list['error'], true);
+             // $error[] = $this->modx->lexicon('msvkmarketexport_albom_error') . print_r($album_list['error'], true);
+            $msg = empty($album_list) ? $this->modx->lexicon('msvkmarket_export_album_error') : $album_list['error']['msg'];
             return json_encode(array(
                 'success' => false,
-                'result' => $album_list['error']['msg']
+                'result' => $msg
             ));
+        }
+
+        $compilations_group = $this->modx->getCollection('VkmCompilation', array( 'group_id' => $groups_param['id'] ));
+        $export_count = 0;
+
+        foreach ($album_list['response']['items'] as $album){
+            $availabel = true;
+            foreach ($compilations_group as $item) {
+                if($album['id'] == $item->get('album_id')){
+                    $availabel = false;
+                    break;
+                }
+            }
+
+            if($availabel == true && $album['title'] != ''){
+                $new_album = $this->modx->newObject('VkmCompilation');
+                $new_album->set('group_id', $groups_param['id']);
+                $new_album->set('name', $album['title']);
+                $new_album->set('album_id', $album['id']);
+                $new_album->save();
+                $export_count++;
+            }
         }
 
         return json_encode(array(
             'success' => true,
-            'result' => array(
-                'name' => $group_name,
+            'result' => $this->modx->lexicon('msvkmarket_compilation_export_response', array(
+                'name' => $groups_param['name'],
                 'count' => $album_list['response']['count'],
-                'items' => $album_list['response']['items']
-            )
+                'export' => $export_count
+            ))
         ));
     }
 
@@ -243,13 +272,8 @@ trait msVKMarketVKEventTrait
             ));
         }
 
-        $app_id         = $groups_param['app_id'];
-        $api_secret     = $groups_param['secretkey'];
-        $access_token   = $groups_param['token'];
-        $group_id       = $groups_param['group_id'];
-
         try {
-            $vk = new VK\VK($app_id, $api_secret, $access_token);
+            $vk = new VK\VK($groups_param['app_id'], $groups_param['secretkey'], $groups_param['token']);
             $vk->setApiVersion('5.59');
         }
         catch (VK\VKException $error) {
@@ -261,7 +285,7 @@ trait msVKMarketVKEventTrait
         }
 
         $add_album = $vk->api('market.deleteAlbum', array(
-            'owner_id' => '-' . $group_id,
+            'owner_id' => '-' . $groups_param['group_id'],
             'album_id' => $album_id
         ));
 
