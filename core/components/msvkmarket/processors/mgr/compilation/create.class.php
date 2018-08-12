@@ -9,6 +9,7 @@ class msVKMarketCompilationCreateProcessor extends modObjectCreateProcessor
     public $objectType = 'VkmCompilation';
     public $languageTopics = ['msvkmarket'];
 
+
     /**
      * @return bool
      */

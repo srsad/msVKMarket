@@ -115,7 +115,7 @@ trait msVKMarketVKEventTrait
      * @param $new_name
      * @return string
      */
-    public function updateAlbum ($id_group, $album_id, $new_name)
+    public function updateAlbum($id_group, $album_id, $new_name)
     {
         $groups_param   = $this->getGroupParam($id_group);
 
@@ -172,7 +172,7 @@ trait msVKMarketVKEventTrait
      * @param $id_group
      * @return string
      */
-    public function exportAlbum ($id_group)
+    public function exportAlbum($id_group)
     {
         $groups_param   = $this->getGroupParam($id_group);
 
@@ -183,6 +183,7 @@ trait msVKMarketVKEventTrait
             ));
         }
 
+        $group_name     = $groups_param['name'];
         $app_id         = $groups_param['app_id'];
         $api_secret     = $groups_param['secretkey'];
         $access_token   = $groups_param['token'];
@@ -216,6 +217,7 @@ trait msVKMarketVKEventTrait
         return json_encode(array(
             'success' => true,
             'result' => array(
+                'name' => $group_name,
                 'count' => $album_list['response']['count'],
                 'items' => $album_list['response']['items']
             )
@@ -230,7 +232,7 @@ trait msVKMarketVKEventTrait
      * @param $album_id
      * @return string
      */
-    public function removeAlbum ($id_group, $album_id)
+    public function removeAlbum($id_group, $album_id)
     {
         $groups_param   = $this->getGroupParam($id_group);
 

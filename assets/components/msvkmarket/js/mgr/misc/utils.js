@@ -98,3 +98,120 @@ msVKMarket.utils.renderActions = function (value, props, row) {
         res.join('')
     );
 };
+
+msVKMarket.window.Console  = function(config) {
+    config = config || {};
+
+    Ext.applyIf(config,{
+        baseParams: {
+            action: config.action || 'console'
+        }
+    });
+
+    Ext.applyIf(config,{
+        title: 'console',
+        modal: Ext.isIE ? false : true,
+        closeAction: 'hide',
+        collapsible: false,
+        maximizable: true,
+        resizable: false,
+        closable: true,
+        shadow: true,
+        height: 400,
+        width: 650,
+        refreshRate: 2,
+        cls: 'modx-window modx-console',
+        items: [{
+            xtype: 'panel',
+            itemId: 'body',
+            id: 'msvkmarket-compilation-window-export',
+            cls: 'x-form-text modx-console-text',
+            border: false
+        }],
+        buttons: [ {
+            text: 'OK',
+            itemId: 'okBtn',
+            disabled: false,
+            scope: this,
+            handler: this.close
+        }],
+        keys: [{
+            key: Ext.EventObject.S,
+            ctrl: true,
+            fn: this.download,
+            scope: this
+        },{
+            key: Ext.EventObject.ENTER,
+            fn: this.close,
+            scope: this
+        }],
+        autoHeight: false,
+        url: msVKMarket.config.connector_url
+    });
+
+    config.baseParams.output_format = 'json';
+    config.baseParams.in_console_mode = true;   // Для отладки
+
+    msVKMarket.window.Console.superclass.constructor.call(this,config);
+
+    this.on('show', this.startWork);
+};
+Ext.extend(msVKMarket.window.Console, MODx.Window,{
+    startWork: function(){ this.submit(); },
+    submit: function(close) {
+        close = close === false ? false : true;
+        var f = this.fp.getForm();
+        if (f.isValid() && this.fireEvent('beforeSubmit',f.getValues())) {
+            f.submit({
+                scope: this,
+                failure: function(frm,response) {
+                    var response = Ext.decode(response.response.responseText);
+                    response.level = response.level || 1;
+                    this.log(response);
+                    if (typeof(this.updateQuery) == 'function') { this.updateQuery(); }
+                },
+                success: function(frm, response) {
+                    if (typeof(this.updateQuery) == 'function') { this.updateQuery(); }
+                    try{
+                        var response = Ext.decode(response.response.responseText);
+                        this.log(response);
+                        if (!response.continue) {
+                            this.fireEvent('complete');
+                            this.fbar.setDisabled(false);
+                            return;
+                        }
+                    }
+                    catch(e){
+                        alert(_('msvkmarket_error_response'));
+                        console.log(e);
+                        return;
+                    }
+                    if(this.isVisible()){ this.submit();}
+                }
+            });
+        }
+    },
+    log: function(response){
+        try{
+            var msg = response.message;
+            var level = response.level;
+            var cls = '';
+
+            switch(level) {
+                case 1: cls = 'error'; break;
+                case 2: cls = 'warn'; break;
+                case 3: cls = 'info'; break;
+                case 4: cls = 'debug'; break;
+            }
+
+            msg = '<p class="' + cls + '">' + msg + '</p>';
+
+            var out = this.getComponent('body');
+            if (out) {
+                out.el.insertHtml('beforeEnd', msg);
+                out.el.scroll('b', out.el.getHeight(), true);
+            }
+        }
+        catch(e){ alert(e); return false; }
+    }
+});

@@ -78,19 +78,29 @@ $_lang['msvkmarket_compilation_intro_msg'] = 'Настройка подборо�
 $_lang['msvkmarket_compilation_create'] = 'Создать подборку';
 $_lang['msvkmarket_compilation_group_name'] = 'Группа';
 $_lang['msvkmarket_compilation_export'] = 'Экспорт подборок';
+$_lang['msvkmarket_compilation_export_response'] = 'Группа [[+name]] <br>
+                                                    Всего подборак: [[+count]] <br>
+                                                    Экспортированно подборак: [[+export]]<br>
+                                                    -------------------------------------<br>';
 
 $_lang['msvkmarket_compialtion_err_name'] = 'Укажите имя подборки';
 $_lang['msvkmarket_compialtion_err_ae'] = 'Такая подборка в этой группе уже есть';
 $_lang['msvkmarket_compialtion_err_group_id'] = 'Укажите группу';
 $_lang['msvkmarket_compilation_err_ns'] = 'Подборка не найдена.';
 
-$_lang['msvkmarket_compilation_creat_albom_error'] = 'Ошибка при создании подборки.';
-$_lang['msvkmarket_compilation_creat_albom_error_log'] = 'Ошибка при создании подборки, проверте логи!';
-$_lang['msvkmarket_compilation_creat_albom_error_name'] = 'Не указанно имя подборки или id группы.';
-$_lang['msvkmarket_compilation_creat_albom_error_id'] = 'Не указанно id подборки или группа.';
-$_lang['msvkmarket_compilation_remove_albom_error'] = 'Ошибка при удалении подборки - [[+msg]]';
+$_lang['msvkmarket_compilation_create_album_error'] = 'Ошибка при создании подборки.';
+$_lang['msvkmarket_compilation_create_album_error_log'] = 'Ошибка при создании подборки, проверте логи!';
+$_lang['msvkmarket_compilation_create_album_error_name'] = 'Не указанно имя подборки или id группы.';
+$_lang['msvkmarket_compilation_create_album_error_id'] = 'Не указанно id подборки или группа.';
+$_lang['msvkmarket_compilation_remove_album_error'] = 'Ошибка при удалении подборки - [[+msg]]';
 
 $_lang['msvkmarket_connect_error'] = 'Ошибка при подключении к VK, событие [[+action]]!';
 
-$_lang['msvkmarketexport_albom_error'] = 'Ошибка экспорта ';
+$_lang['msvkmarket_export_album_error'] = 'Ошибка экспорта ';
+
+
+$_lang['msvkmarket_error_response'] = 'Ошибка разбора ответа';
+
+$_lang['msvkmarket_console_start'] = 'Начало';
+$_lang['msvkmarket_console_end'] = 'Конец';
 
