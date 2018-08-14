@@ -24,12 +24,10 @@ msVKMarket.panel.Home = function (config) {
                     cls: 'main-wrapper',
                     items: [{
                         xtype: 'msvkmarket-tree-categories',
-                        //optionGrid: 'vkmarket-grid-goods',
+                        optionGrid: 'msvkmarket-grid-items',
                         columnWidth: .25
                     },{
-                        //html: 'grid',
-                        xtype: 'combo-superselect-groups'
-                        //xtype: 'vkmarket-grid-goods',
+                        xtype: 'msvkmarket-grid-items'
                         ,columnWidth: .75
                     }]
                 }]

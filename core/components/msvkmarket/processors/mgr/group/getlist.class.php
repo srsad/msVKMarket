@@ -1,6 +1,5 @@
 <?php
 
-
 class msVKMarketGroupGetListProcessor extends modObjectGetListProcessor
 {
     public $objectType = 'VkmGroups';

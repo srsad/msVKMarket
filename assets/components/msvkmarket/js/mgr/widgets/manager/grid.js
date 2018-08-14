@@ -1,16 +1,17 @@
 msVKMarket.grid.Items = function (config) {
     config = config || {};
     if (!config.id) {
-        config.id = 'msvkmarket-grid-item';
+        config.id = 'msvkmarket-grid-items';
     }
+    this.sm = new Ext.grid.CheckboxSelectionModel();
     Ext.applyIf(config, {
         url: msVKMarket.config.connector_url,
         fields: this.getFields(config),
         columns: this.getColumns(config),
         tbar: this.getTopBar(config),
-        sm: new Ext.grid.CheckboxSelectionModel(),
+        sm: this.sm,
         baseParams: {
-            action: 'mgr/item/getlist'
+            action: 'mgr/manager/getlist'
         },
         listeners: {
             rowDblClick: function (grid, rowIndex, e) {
@@ -182,31 +183,47 @@ Ext.extend(msVKMarket.grid.Items, MODx.grid.Grid, {
     },
 
     getFields: function () {
-        return ['id', 'name', 'description', 'active', 'actions'];
+        return ['id','pagetitle', 'thumb', 'category_name', 'parent', 'product_status', 'vkpublished', 'date_sync', 'actions'];
     },
 
     getColumns: function () {
-        return [{
+        return [this.sm,{
             header: _('msvkmarket_item_id'),
             dataIndex: 'id',
             sortable: true,
             width: 70
-        }, {
-            header: _('msvkmarket_item_name'),
-            dataIndex: 'name',
+        },{
+            dataIndex: 'pagetitle',
+            width: 400,
             sortable: true,
-            width: 200,
+            header: _('msvkmarket_item_grid_name'),
+            id: 'product-title',
+            renderer: this._renderPagetitle
         }, {
-            header: _('msvkmarket_item_description'),
-            dataIndex: 'description',
-            sortable: false,
-            width: 250,
+            dataIndex: 'thumb',
+            width: 80,
+            header: _('msvkmarket_item_grid_img'),
+            id: 'image-block',
+            renderer: msVKMarket.utils.Image
         }, {
-            header: _('msvkmarket_item_active'),
-            dataIndex: 'active',
-            renderer: msVKMarket.utils.renderBoolean,
-            sortable: true,
+            dataIndex: 'product_status',
             width: 100,
+            sortable: true,
+            header: _('msvkmarket_item_grid_status'),
+            id: 'status-block',
+            //renderer: msVKMarket.utils.ProductStatus
+        }, /*{
+            dataIndex: 'vkpublished',
+            width: 55,
+            sortable: true,
+            header: _('msvkmarket_item_grid_public'),
+            id: 'published-block',
+            //renderer: msVKMarket.utils.VKPublished
+        },*/ {
+            dataIndex: 'date_sync',
+            width: 175,
+            sortable: true,
+            header: _('msvkmarket_item_grid_date')
         }, {
             header: _('msvkmarket_grid_actions'),
             dataIndex: 'actions',
@@ -284,4 +301,4 @@ Ext.extend(msVKMarket.grid.Items, MODx.grid.Grid, {
         this.getBottomToolbar().changePage(1);
     }
 });
-Ext.reg('msvkmarket-grid-item', msVKMarket.grid.Items);
+Ext.reg('msvkmarket-grid-items', msVKMarket.grid.Items);

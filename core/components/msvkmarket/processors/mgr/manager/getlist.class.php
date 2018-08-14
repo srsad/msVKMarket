@@ -2,10 +2,12 @@
 
 class msVKMarketItemGetListProcessor extends modObjectGetListProcessor
 {
-    public $objectType = 'msVKMarket';
-    public $classKey = 'msVKMarket';
+    public $objectType = 'miniShop2';
+    public $classKey = 'msProduct';
     public $defaultSortField = 'id';
     public $defaultSortDirection = 'DESC';
+    public $languageTopics = ['msvkmarket'];
+
 
     /**
      * We do a special check of permissions
@@ -30,11 +32,42 @@ class msVKMarketItemGetListProcessor extends modObjectGetListProcessor
      */
     public function prepareQueryBeforeCount(xPDOQuery $c)
     {
+        $c->leftJoin('VkmProduct', 'VkmProduct', 'msProduct.id = VkmProduct.product_id');
+        $c->leftJoin('msProductData', 'Data', 'msProduct.id = Data.id');
+        $c->leftJoin('msCategory', 'Category', 'msProduct.parent = Category.id');
+        $c->select('`msProduct`.`pagetitle`, `msProduct`.`id`, `msProduct`.`parent`,  `Data`.`thumb`, 
+                    `Category`.`pagetitle` AS category_name,
+                    `VkmProduct`.`product_id`, `VkmProduct`.`product_status`, `VkmProduct`.`published` AS vkpublished, 
+                    `VkmProduct`.`image_sync`, `VkmProduct`.`date_sync` ');
+
+        $category   = (int)$this->getProperty('category', 0);
+        $categories = $this->getProperty('categories', '[]');
+        $categories = json_decode($categories, true);
+        $where[]    = array(
+            'class_key' => $this->classKey,
+            'deleted' => false,
+            'published' => true
+        );
+
+        // todo попробовать пеервести $category в массив и использовать только одно услови `msProduct.parent:IN`
+        if ($category > 0) {
+            $where[] = array('msProduct.parent' => $category);
+        }
+        if (count($categories) > 0) {
+            $where[] = array('msProduct.parent:IN' => $categories);
+        }
+        $c->where($where);
         $query = trim($this->getProperty('query'));
         if ($query) {
             $c->where([
-                'name:LIKE' => "%{$query}%",
-                'OR:description:LIKE' => "%{$query}%",
+                'msProduct.pagetitle:LIKE' => "%{$query}%",
+                'OR:msProduct.longtitle:LIKE' => "%{$query}%",
+                'OR:msProduct.description:LIKE' => "%{$query}%",
+                'OR:msProduct.introtext:LIKE' => "%{$query}%",
+                'OR:Data.article:LIKE' => "%{$query}%",
+                'OR:Data.made_in:LIKE' => "%{$query}%",
+                'OR:Vendor.name:LIKE' => "%{$query}%",
+                'OR:Category.pagetitle:LIKE' => "%{$query}%",
             ]);
         }
 
@@ -57,7 +90,6 @@ class msVKMarketItemGetListProcessor extends modObjectGetListProcessor
             'cls' => '',
             'icon' => 'icon icon-edit',
             'title' => $this->modx->lexicon('msvkmarket_item_update'),
-            //'multiple' => $this->modx->lexicon('msvkmarket_items_update'),
             'action' => 'updateItem',
             'button' => true,
             'menu' => true,
@@ -84,7 +116,7 @@ class msVKMarketItemGetListProcessor extends modObjectGetListProcessor
                 'menu' => true,
             ];
         }
-
+/*
         // Remove
         $array['actions'][] = [
             'cls' => '',
@@ -95,7 +127,7 @@ class msVKMarketItemGetListProcessor extends modObjectGetListProcessor
             'button' => true,
             'menu' => true,
         ];
-
+*/
         return $array;
     }
 

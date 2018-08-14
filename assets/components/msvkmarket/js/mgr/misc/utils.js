@@ -99,6 +99,19 @@ msVKMarket.utils.renderActions = function (value, props, row) {
     );
 };
 
+msVKMarket.utils.Image = function (value) {
+    if (Ext.isEmpty(value)){
+        return '';
+    }else {
+        if (!/\/\//.test(value)){
+            if (!/^\//.test(value)){
+                value = '/' + value;
+            }
+        }
+    }
+    return String.format('<img src="{0}" style="width: 55px;" />', value);
+};
+
 msVKMarket.window.Console  = function(config) {
     config = config || {};
 

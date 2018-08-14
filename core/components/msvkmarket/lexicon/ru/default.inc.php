@@ -28,6 +28,14 @@ $_lang['msvkmarket_tree_clear_all'] = 'Отчистить всё';
 
 $_lang['msvkmarket_item_create'] = 'Создать предмет';
 
+$_lang['msvkmarket_item_grid_name'] = 'Имя';
+$_lang['msvkmarket_item_grid_img'] = 'Картинка';
+$_lang['msvkmarket_item_grid_status'] = 'Статус';
+$_lang['msvkmarket_item_grid_public'] = 'Публикация';
+$_lang['msvkmarket_item_grid_date'] = 'Дата';
+
+
+
 $_lang['msvkmarket_group_intro_msg'] = 'Настройки групп';
 $_lang['msvkmarket_group_create'] = 'Добавить группу';
 $_lang['msvkmarket_group_name'] = 'Имя группы';
@@ -96,11 +104,8 @@ $_lang['msvkmarket_compilation_create_album_error_id'] = 'Не указанно 
 $_lang['msvkmarket_compilation_remove_album_error'] = 'Ошибка при удалении подборки - [[+msg]]';
 
 $_lang['msvkmarket_connect_error'] = 'Ошибка при подключении к VK, событие [[+action]]!';
-
 $_lang['msvkmarket_export_album_error'] = 'Ошибка экспорта ';
-
 $_lang['msvkmarket_error_response'] = 'Ошибка разбора ответа';
-
 $_lang['msvkmarket_console_start'] = 'Консоль запущенна';
 $_lang['msvkmarket_console_end'] = 'Конец';
 
