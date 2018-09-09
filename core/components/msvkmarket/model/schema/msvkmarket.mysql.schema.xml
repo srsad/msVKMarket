@@ -86,18 +86,10 @@
         <index alias="product_status_sinc" name="product_status_sinc" primary="false" unique="false" type="BTREE" >
             <column key="product_status_sinc" length="" collation="A" null="false" />
         </index>
-        <index alias="compilation_id_2" name="compilation_id_2" primary="false" unique="false" type="BTREE" >
-            <column key="compilation_id" length="" collation="A" null="false" />
-        </index>
-        <index alias="product_id_2" name="product_id_2" primary="false" unique="false" type="BTREE" >
-            <column key="product_id" length="" collation="A" null="false" />
-        </index>
-        <index alias="groups_id_2" name="groups_id_2" primary="false" unique="false" type="BTREE" >
-            <column key="groups_id" length="" collation="A" null="false" />
-        </index>
         <index alias="owner_id" name="owner_id" primary="false" unique="false" type="BTREE" >
             <column key="owner_id" length="" collation="A" null="false" />
         </index>
+
         <aggregate alias="VkmCompilation" class="VkmCompilation" local="compilation_id" foreign="id" cardinality="one" owner="foreign" />
         <aggregate alias="VkmGroups" class="VkmGroups" local="groups_id" foreign="id" cardinality="one" owner="foreign" />
         <aggregate alias="VkmProduct" class="VkmProduct" local="product_id" foreign="product_id" cardinality="one" owner="foreign" />

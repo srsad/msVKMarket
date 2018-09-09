@@ -112,6 +112,19 @@ msVKMarket.utils.Image = function (value) {
     return String.format('<img src="{0}" style="width: 55px;" />', value);
 };
 
+msVKMarket.utils.productLink = function (value, id) {
+    if (!value) {
+        return '';
+    }else if (!id) {
+        return value;
+    }
+    return String.format(
+        '<a href="index.php?a=resource/update&id={0}" class="msvkmarket-link" target="_blank">{1}</a>',
+        id,
+        value
+    );
+};
+
 msVKMarket.window.Console  = function(config) {
     config = config || {};
 

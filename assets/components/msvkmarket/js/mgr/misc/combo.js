@@ -54,10 +54,6 @@ msVKMarket.combo.Groups = function (config) {
         name: 'groups_id',
         id: Ext.id() + '-groups_id',
         msgTarget: 'under',
-        //allowAddNewData: true,
-        //addNewDataOnBlur: true,
-        //resizable: true,
-        //minChars: 1,
         valueField: 'id',
         store: new Ext.data.JsonStore({
             root: 'results',
@@ -72,7 +68,7 @@ msVKMarket.combo.Groups = function (config) {
                 where: '{"status":"1"}'
             }
         }),
-        //,tpl:  '<tpl for="."><div class="x-combo-list-item"><span>({id})</span> - {name}</div></tpl>'
+        tpl:  '<tpl for="."><div class="x-combo-list-item"><span>({id})</span> - {name}</div></tpl>',
         mode: 'remote',
         displayField: 'name',
         triggerAction: 'all',
@@ -85,3 +81,50 @@ msVKMarket.combo.Groups = function (config) {
 };
 Ext.extend(msVKMarket.combo.Groups, Ext.ux.form.SuperBoxSelect); // SuperBoxSelect
 Ext.reg('combo-superselect-groups', msVKMarket.combo.Groups);
+
+
+// поборки к данным группам
+msVKMarket.combo.CompilationSS = function (config) {
+    config = config || {};
+
+    Ext.applyIf(config, {
+        xtype: 'superboxselect',
+        name: 'compilation_id',
+        allowBlank: true,
+        msgTarget: 'under',
+        allowAddNewData: true,
+        addNewDataOnBlur: true,
+        pinList: false,
+        resizable: true,
+        minChars: 1,
+        disabled: true,
+        store: new Ext.data.JsonStore({
+            id: 'compilation-store',
+            root: 'results',
+            autoLoad: false,
+            autoSave: false,
+            totalProperty: 'total',
+            fields: ['id', 'name', 'group_id', 'groupname'],
+            //data: ['id', 'name', {id:'1', name: 'float'}, {id:'2', name:'date'}],
+            url: msVKMarket.config.connector_url,
+            baseParams: {
+                action: 'mgr/manager/gatcompilation',
+                ids: config.groupIds != undefined ? config.groupIds : ''
+            }
+        }),
+        tpl: '<tpl for="."><div class="x-combo-list-item"> \
+							<b>{name}</b><br> \
+							<span><small>({group_id}) - {groupname}</small></span>\
+						</div></tpl>',
+        mode: 'remote',
+        displayField: 'name',
+        valueField: 'id',
+        triggerAction: 'all',
+        extraItemCls: 'x-tag',
+        expandBtnCls: 'x-form-trigger',
+        clearBtnCls: 'x-form-trigger'
+    });
+    msVKMarket.combo.CompilationSS.superclass.constructor.call(this, config);
+};
+Ext.extend(msVKMarket.combo.CompilationSS, Ext.ux.form.SuperBoxSelect);
+Ext.reg('combo-superselect-compilation', msVKMarket.combo.CompilationSS);

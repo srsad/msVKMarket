@@ -152,15 +152,4 @@ $xpdo_meta_map['VkmProduct']= array (
       'owner' => 'local',
     ),
   ),
-  'aggregates' => 
-  array (
-    'Ms2Products' => 
-    array (
-      'class' => 'msProductData',
-      'local' => 'product_id',
-      'foreign' => 'id',
-      'cardinality' => 'one',
-      'owner' => 'foreign',
-    ),
-  ),
 );

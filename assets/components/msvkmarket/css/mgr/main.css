@@ -94,3 +94,12 @@ a.msvkmarket-btn.disabled, fieldset[disabled] a.msvkmarket-btn { pointer-events:
 .msvkmarket-btn-xs { padding: 1px 5px; font-size: 12px; line-height: 1.5; border-radius: 3px }
 .msvkmarket-btn-block { display: block; width: 100% }
 .msvkmarket-btn-block + .msvkmarket-btn-block { margin-top: 5px }
+
+/*Grid pagetitle*/
+.x-grid3-col-image-block{padding: 3px 0 0 0px;}
+.x-grid3-col-status-block,.x-grid3-col-published-block{text-align: center;}
+.x-grid3-col-product-title .id {font-size: 90%;padding-right: 5px;color: #555;}
+.x-grid3-col-product-title {padding-bottom: 0;}
+.x-grid3-col-product-title .msvkmarket-link{color: #005580;font-weight: 700;}
+.x-grid3-col-product-title .product-category a,.x-grid3-col-product-title .product-category small{color: #555;font-size: 80%;font-weight: 500;padding-top: 7px;text-decoration: none;transition: all .2s;}
+.x-grid3-col-product-title .product-category > a:hover{color: #005580;text-decoration: underline;}

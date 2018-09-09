@@ -202,20 +202,3 @@ Ext.extend(msVKMarket.window.ExportCompilation, MODx.Window,{
 
 });
 Ext.reg('msvkmarket-compilation-window-export', msVKMarket.window.ExportCompilation);
-
-/*
-var topic = '/mytopic/';
-var register = 'mgr';
-var console = MODx.load({
-    xtype: 'modx-console'
-    ,register: register
-    ,topic: topic
-    ,show_filename: 0
-    ,listeners: {
-        'shutdown': {fn:function() {
-                // do code here when you close the console
-            },scope:this}
-    }
-});
-console.show(Ext.getBody());
-*/

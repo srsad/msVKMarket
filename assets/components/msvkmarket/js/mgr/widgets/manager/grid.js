@@ -1,4 +1,5 @@
 msVKMarket.grid.Items = function (config) {
+
     config = config || {};
     if (!config.id) {
         config.id = 'msvkmarket-grid-items';
@@ -33,7 +34,7 @@ msVKMarket.grid.Items = function (config) {
         },
         paging: true,
         remoteSort: true,
-        autoHeight: true,
+        autoHeight: true
     });
     msVKMarket.grid.Items.superclass.constructor.call(this, config);
 
@@ -55,7 +56,7 @@ Ext.extend(msVKMarket.grid.Items, MODx.grid.Grid, {
 
         this.addContextMenuItem(menu);
     },
-
+/*
     createItem: function (btn, e) {
         var w = MODx.load({
             xtype: 'msvkmarket-item-window-create',
@@ -72,15 +73,87 @@ Ext.extend(msVKMarket.grid.Items, MODx.grid.Grid, {
         w.setValues({active: true});
         w.show(e.target);
     },
+*/
+    detailedExport: function () {
+        console.log('detailedExport');
+    },
+
+    fastExport: function () {
+
+        var cs 			 = this.getSelectedAsList();
+
+        console.log(msVKMarket.config.connector_url);
+
+        if (cs === false) {
+            var parent = [];
+            var tree = Ext.getCmp('msvkmarket-tree').getChecked();
+            for (var i = 0; i < tree.length; i++) { parent.push(tree[i].attributes.pk); }
+            parent = parent.join(',') === '' ? 0 : parent.join(',');
+
+            MODx.Ajax.request({
+                url: msVKMarket.config.connector_url,
+                params: {
+                    action: 'mgr/manager/getidlist',
+                    parents: parent
+                },
+                listeners: {
+                    success: {
+                        fn:function(r) {
+                            cs = r.results;
+                            console.log(cs);
+                        }
+                    }
+                }
+            });
+        }
+
+        // todo продолжить отсюда
+        Ext.MessageBox.confirm(
+            'msvkm_manager_fast_synk'
+            ,'msvkm_manager_w_fast_synk_desc'
+            ,function(config){
+                if(config === 'yes'){
+                    var w = new VkMarket.window.Console({
+                        'register'  : 'mgr'
+                        ,autoScroll	: true
+                        ,baseParams	: {
+                            action: 'mgr/manager/fastsync'
+                            ,id: cs
+                            ,step: 0
+                        },
+                        updatQuery: function(){
+                            var step 	 = this.baseParams.step;
+                            var arrId  	 = this.baseParams.id;
+                            if (arrId != null) {
+                                var arrSplit = arrId.split(',');
+                                arrSplit.shift();
+                                this.baseParams.id 	 = arrSplit.join(',');
+                            }
+                            this.baseParams.step = step+1;
+                        },
+                        scope: msVKMarket
+                    }).show();
+                    w.log({message: 'msvkm_manager_synk_start', level: 3});
+                    w.on('complete', function(){
+                        this.scope.refresh();
+                    });
+                }
+
+            }
+        );
+        return true;
+    },
 
     updateItem: function (btn, e, row) {
         if (typeof(row) != 'undefined') {
             this.menu.record = row.data;
-        }
-        else if (!this.menu.record) {
+        } else if (!this.menu.record) {
             return false;
         }
         var id = this.menu.record.id;
+
+        console.log('sadasd');
+        console.log(id);
 
         MODx.Ajax.request({
             url: this.config.url,
@@ -91,8 +164,9 @@ Ext.extend(msVKMarket.grid.Items, MODx.grid.Grid, {
             listeners: {
                 success: {
                     fn: function (r) {
+                        console.log(r);
                         var w = MODx.load({
-                            xtype: 'msvkmarket-item-window-update',
+                            xtype: 'msvkmarket-item-windows-more-info',
                             id: Ext.id(),
                             record: r,
                             listeners: {
@@ -112,35 +186,8 @@ Ext.extend(msVKMarket.grid.Items, MODx.grid.Grid, {
         });
     },
 
-    removeItem: function () {
-        var ids = this._getSelectedIds();
-        if (!ids.length) {
-            return false;
-        }
-        MODx.msg.confirm({
-            title: ids.length > 1
-                ? _('msvkmarket_items_remove')
-                : _('msvkmarket_item_remove'),
-            text: ids.length > 1
-                ? _('msvkmarket_items_remove_confirm')
-                : _('msvkmarket_item_remove_confirm'),
-            url: this.config.url,
-            params: {
-                action: 'mgr/manager/remove',
-                ids: Ext.util.JSON.encode(ids),
-            },
-            listeners: {
-                success: {
-                    fn: function () {
-                        this.refresh();
-                    }, scope: this
-                }
-            }
-        });
-        return true;
-    },
-
-    disableItem: function () {
+    publishedEnable: function(){
+        console.log('publishedEnable');
         var ids = this._getSelectedIds();
         if (!ids.length) {
             return false;
@@ -149,7 +196,7 @@ Ext.extend(msVKMarket.grid.Items, MODx.grid.Grid, {
             url: this.config.url,
             params: {
                 action: 'mgr/manager/disable',
-                ids: Ext.util.JSON.encode(ids),
+                ids: Ext.util.JSON.encode(ids)
             },
             listeners: {
                 success: {
@@ -160,7 +207,37 @@ Ext.extend(msVKMarket.grid.Items, MODx.grid.Grid, {
             }
         })
     },
+    publishedDisable: function(){
+        console.log('publishedDisable');
+    },
+    productStatusEnableItem: function(){
+        console.log('productStatusEnableItem');
+    },
+    productStatusDisable: function(){
+        console.log('productStatusDisable');
+    },
 
+    // todo потом удалить disableItem и enableItem
+    disableItem: function () {
+        var ids = this._getSelectedIds();
+        if (!ids.length) {
+            return false;
+        }
+        MODx.Ajax.request({
+            url: this.config.url,
+            params: {
+                action: 'mgr/manager/disable',
+                ids: Ext.util.JSON.encode(ids)
+            },
+            listeners: {
+                success: {
+                    fn: function () {
+                        this.refresh();
+                    }, scope: this
+                }
+            }
+        })
+    },
     enableItem: function () {
         var ids = this._getSelectedIds();
         if (!ids.length) {
@@ -170,7 +247,7 @@ Ext.extend(msVKMarket.grid.Items, MODx.grid.Grid, {
             url: this.config.url,
             params: {
                 action: 'mgr/manager/enable',
-                ids: Ext.util.JSON.encode(ids),
+                ids: Ext.util.JSON.encode(ids)
             },
             listeners: {
                 success: {
@@ -205,12 +282,12 @@ Ext.extend(msVKMarket.grid.Items, MODx.grid.Grid, {
             header: _('msvkmarket_item_grid_img'),
             id: 'image-block',
             renderer: msVKMarket.utils.Image
-        }, {
+        }, /*{
             dataIndex: 'product_status',
             width: 100,
             sortable: true,
             header: _('msvkmarket_item_grid_status'),
-            id: 'status-block',
+            id: 'status-block'
             //renderer: msVKMarket.utils.ProductStatus
         }, /*{
             dataIndex: 'vkpublished',
@@ -229,15 +306,19 @@ Ext.extend(msVKMarket.grid.Items, MODx.grid.Grid, {
             dataIndex: 'actions',
             renderer: msVKMarket.utils.renderActions,
             sortable: false,
-            width: 100,
+            width: 150,
             id: 'actions'
         }];
     },
 
     getTopBar: function () {
         return [{
-            text: '<i class="icon icon-plus"></i>&nbsp;' + _('msvkmarket_item_create'),
-            handler: this.createItem,
+            text: '<i class="icon icon-gear"></i>&nbsp;' + 'msvkmarket_item_detailedExport',
+            handler: this.detailedExport,
+            scope: this
+        },{
+            text: '<i class="icon icon-refresh"></i>&nbsp;' + 'msvkmarket_item_fastExport',
+            handler: this.fastExport,
             scope: this
         }, '->', {
             xtype: 'msvkmarket-field-search',
@@ -253,7 +334,7 @@ Ext.extend(msVKMarket.grid.Items, MODx.grid.Grid, {
                         field.setValue('');
                         this._clearSearch();
                     }, scope: this
-                },
+                }
             }
         }];
     },
@@ -299,6 +380,30 @@ Ext.extend(msVKMarket.grid.Items, MODx.grid.Grid, {
     _clearSearch: function () {
         this.getStore().baseParams.query = '';
         this.getBottomToolbar().changePage(1);
+    },
+
+    _renderPagetitle: function (value, cell, row) {
+        var link = msVKMarket.utils.productLink(value, row['data']['id']);
+        if (!row.data['category_name']) {
+            return String.format(
+                '<div class="native-product"><span class="id">({0})</span>{1}</div>',
+                row['data']['id'],
+                link
+            );
+        }else {
+            var category_link = msVKMarket.utils.productLink(row.data['category_name'], row.data['parent']);
+            return String.format(
+                '<div class="nested-product">\
+                    <span class="id" style="display:none;">({0})</span>{1}\
+                    <div class="product-category"><small>({2})</small> {3}</div>\
+                </div>',
+                row['data']['id'],
+                link,
+                row.data['parent'],
+                category_link
+            );
+        }
     }
+
 });
 Ext.reg('msvkmarket-grid-items', msVKMarket.grid.Items);

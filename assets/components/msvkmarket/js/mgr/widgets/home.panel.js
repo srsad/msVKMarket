@@ -49,7 +49,6 @@ msVKMarket.panel.Home = function (config) {
                     cls: 'panel-desc'
                 }, {
                     xtype: 'msvkmarket-grid-compilation',
-                    //xtype: 'msvkmarket-grid-items',
                     cls: 'main-wrapper'
                 }]
             }]

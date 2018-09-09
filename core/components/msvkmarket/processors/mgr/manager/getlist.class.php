@@ -49,7 +49,7 @@ class msVKMarketItemGetListProcessor extends modObjectGetListProcessor
             'published' => true
         );
 
-        // todo попробовать пеервести $category в массив и использовать только одно услови `msProduct.parent:IN`
+        // todo пеервести $category в массив и использовать только одно услови `msProduct.parent:IN`
         if ($category > 0) {
             $where[] = array('msProduct.parent' => $category);
         }
@@ -95,13 +95,14 @@ class msVKMarketItemGetListProcessor extends modObjectGetListProcessor
             'menu' => true,
         ];
 
-        if (!$array['active']) {
+        // доступен для экспорта, поумолчанию - ддоступен
+        if (!$array['published']) {
             $array['actions'][] = [
                 'cls' => '',
                 'icon' => 'icon icon-power-off action-green',
                 'title' => $this->modx->lexicon('msvkmarket_item_enable'),
                 'multiple' => $this->modx->lexicon('msvkmarket_items_enable'),
-                'action' => 'enableItem',
+                'action' => 'publishedEnable',
                 'button' => true,
                 'menu' => true,
             ];
@@ -111,11 +112,35 @@ class msVKMarketItemGetListProcessor extends modObjectGetListProcessor
                 'icon' => 'icon icon-power-off action-gray',
                 'title' => $this->modx->lexicon('msvkmarket_item_disable'),
                 'multiple' => $this->modx->lexicon('msvkmarket_items_disable'),
-                'action' => 'disableItem',
+                'action' => 'publishedDisable',
                 'button' => true,
                 'menu' => true,
             ];
         }
+
+        // был ли экспортирован ранее
+        if (!$array['product_status']) {
+            $array['actions'][] = [
+                'cls' => '',
+                'icon' => 'icon icon-eye action-green',
+                'title' => $this->modx->lexicon('msvkmarket_item_enable'),
+                'multiple' => $this->modx->lexicon('msvkmarket_items_enable'),
+                'action' => 'productStatusEnableItem',
+                'button' => true,
+                'menu' => true,
+            ];
+        } else {
+            $array['actions'][] = [
+                'cls' => '',
+                'icon' => 'icon icon-eye-slash action-red',
+                'title' => $this->modx->lexicon('msvkmarket_item_disable'),
+                'multiple' => $this->modx->lexicon('msvkmarket_items_disable'),
+                'action' => 'productStatusDisable',
+                'button' => true,
+                'menu' => true,
+            ];
+        }
+
 /*
         // Remove
         $array['actions'][] = [
