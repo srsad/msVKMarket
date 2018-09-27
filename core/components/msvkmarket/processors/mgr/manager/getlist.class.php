@@ -1,6 +1,6 @@
 <?php
 
-class msVKMarketItemGetListProcessor extends modObjectGetListProcessor
+class msVKMarketMangerGetListProcessor extends modObjectGetListProcessor
 {
     public $objectType = 'miniShop2';
     public $classKey = 'msProduct';
@@ -141,21 +141,9 @@ class msVKMarketItemGetListProcessor extends modObjectGetListProcessor
             ];
         }
 
-/*
-        // Remove
-        $array['actions'][] = [
-            'cls' => '',
-            'icon' => 'icon icon-trash-o action-red',
-            'title' => $this->modx->lexicon('msvkmarket_item_remove'),
-            'multiple' => $this->modx->lexicon('msvkmarket_items_remove'),
-            'action' => 'removeItem',
-            'button' => true,
-            'menu' => true,
-        ];
-*/
         return $array;
     }
 
 }
 
-return 'msVKMarketItemGetListProcessor';
+return 'msVKMarketMangerGetListProcessor';

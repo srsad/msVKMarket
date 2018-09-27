@@ -74,16 +74,13 @@ Ext.extend(msVKMarket.grid.Items, MODx.grid.Grid, {
         w.show(e.target);
     },
 */
-    detailedExport: function () {
+    detailedImport: function () {
         console.log('detailedExport');
     },
 
-    fastExport: function () {
-
-        var cs 			 = this.getSelectedAsList();
-
-        console.log(msVKMarket.config.connector_url);
-
+    fastImport: function () {
+        var cs = this.getSelectedAsList();
+        var grid = this;
         if (cs === false) {
             var parent = [];
             var tree = Ext.getCmp('msvkmarket-tree').getChecked();
@@ -100,43 +97,49 @@ Ext.extend(msVKMarket.grid.Items, MODx.grid.Grid, {
                     success: {
                         fn:function(r) {
                             cs = r.results;
-                            console.log(cs);
+                            //console.log(cs);
+                            grid.importConsole(cs);
                         }
                     }
                 }
             });
+        } else {
+            this.importConsole(cs);
         }
+    },
 
-        // todo продолжить отсюда
+    importConsole: function(cs){
+        var grid = this;
         Ext.MessageBox.confirm(
             'msvkm_manager_fast_synk'
             ,'msvkm_manager_w_fast_synk_desc'
             ,function(config){
                 if(config === 'yes'){
-                    var w = new VkMarket.window.Console({
-                        'register'  : 'mgr'
-                        ,autoScroll	: true
-                        ,baseParams	: {
-                            action: 'mgr/manager/fastsync'
-                            ,id: cs
-                            ,step: 0
+                    var w = new msVKMarket.window.Console({
+                        register  : 'mgr',
+                        autoScroll : true,
+                        baseParams : {
+                            action: 'mgr/manager/import',
+                            id: cs,
+                            step: 0
                         },
-                        updatQuery: function(){
-                            var step 	 = this.baseParams.step;
-                            var arrId  	 = this.baseParams.id;
+                        updateQuery: function(){
+                            var step  = this.baseParams.step;
+                            var arrId = this.baseParams.id;
                             if (arrId != null) {
                                 var arrSplit = arrId.split(',');
                                 arrSplit.shift();
-                                this.baseParams.id 	 = arrSplit.join(',');
+                                this.baseParams.id   = arrSplit.join(',');
                             }
                             this.baseParams.step = step+1;
-                        },
-                        scope: msVKMarket
+                        }, scope: grid
                     }).show();
-                    w.log({message: 'msvkm_manager_synk_start', level: 3});
+                    w.log({message: _('msvkmarket_items_import_start'), level: 3});
                     w.on('complete', function(){
-                        this.scope.refresh();
+                        window.close();
+                        grid.refresh();
                     });
+
                 }
 
             }
@@ -313,12 +316,12 @@ Ext.extend(msVKMarket.grid.Items, MODx.grid.Grid, {
 
     getTopBar: function () {
         return [{
-            text: '<i class="icon icon-gear"></i>&nbsp;' + 'msvkmarket_item_detailedExport',
-            handler: this.detailedExport,
+            text: '<i class="icon icon-gear"></i>&nbsp;' + _('msvkmarket_item_detailed_import'),
+            handler: this.detailedImport,
             scope: this
         },{
-            text: '<i class="icon icon-refresh"></i>&nbsp;' + 'msvkmarket_item_fastExport',
-            handler: this.fastExport,
+            text: '<i class="icon icon-refresh"></i>&nbsp;' + _('msvkmarket_item_fast_import'),
+            handler: this.fastImport,
             scope: this
         }, '->', {
             xtype: 'msvkmarket-field-search',

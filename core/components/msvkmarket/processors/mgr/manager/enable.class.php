@@ -1,6 +1,6 @@
 <?php
 
-class msVKMarketItemEnableProcessor extends modObjectProcessor
+class msVKMarketManagerEnableProcessor extends modObjectProcessor
 {
     public $objectType = 'msVKMarketItem';
     public $classKey = 'msVKMarketItem';
@@ -23,7 +23,7 @@ class msVKMarketItemEnableProcessor extends modObjectProcessor
         }
 
         foreach ($ids as $id) {
-            /** @var msVKMarketItem $object */
+            /** @var xPDOObject $object */
             if (!$object = $this->modx->getObject($this->classKey, $id)) {
                 return $this->failure($this->modx->lexicon('msvkmarket_item_err_nf'));
             }
@@ -37,4 +37,4 @@ class msVKMarketItemEnableProcessor extends modObjectProcessor
 
 }
 
-return 'msVKMarketItemEnableProcessor';
+return 'msVKMarketManagerEnableProcessor';

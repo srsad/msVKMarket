@@ -21,7 +21,7 @@ class msVKMarketGroupRemoveProcessor extends modObjectProcessor
         }
 
         foreach ($ids as $id) {
-            /** @var VkmGroups $object */
+            /** @var xPDOObject $object */
             if (!$object = $this->modx->getObject($this->classKey, $id)) {
                 return $this->failure($this->modx->lexicon('msvkmarket_group_err_nf'));
             }

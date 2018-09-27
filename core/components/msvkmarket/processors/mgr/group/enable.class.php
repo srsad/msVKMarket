@@ -22,7 +22,7 @@ class msVKMarketGroupEnableProcessor extends modObjectProcessor
         }
 
         foreach ($ids as $id) {
-            /** @var VkmGroups $object */
+            /** @var xPDOObject $object */
             if (!$object = $this->modx->getObject($this->classKey, $id)) {
                 return $this->failure($this->modx->lexicon('msvkmarket_item_err_nf'));
             }

@@ -106,7 +106,6 @@ Ext.extend(msVKMarket.window.UpdateItem, MODx.Window, {
 });
 Ext.reg('msvkmarket-item-window-update', msVKMarket.window.UpdateItem);
 
-
 // окошко индивидуальной синхронизации
 msVKMarket.window.MoreInfo = function(config){
     config = config || {};

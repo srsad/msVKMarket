@@ -9,21 +9,15 @@ class msVKMarketManagerGetIdListProcessor extends modProcessor
      */
     public function process()
     {
-        $this->modx->log(1, print_r($this->getProperties(), true));
-        $this->modx->log(1, 'sdfsdfsdfs');
-
-        $parents  = $this->getProperty('parents');
+        $parents = $this->getProperty('parents');
         $results = array();
+        $where   = array('published' => 1, 'deleted' => 0, 'class_key' => $this->classKey);
 
+        if ($parents !== '0') { $where['parent:IN'] = explode(',', $parents); }
 
         $q = $this->modx->newQuery($this->classKey);
         $q->select('id');
-        $q->where(array(
-                'parent:IN' => explode(',', $parents),
-                'published' => 1,
-                'deleted' => 0,
-            )
-        );
+        $q->where($where);
         $q->limit(0);
         if ($q->prepare() && $q->stmt->execute()) {$arr = $q->stmt->fetchAll(PDO::FETCH_ASSOC);}
 

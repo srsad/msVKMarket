@@ -1,6 +1,6 @@
 <?php
 
-class msVKMarketItemGetProcessor extends modObjectGetProcessor
+class msVKMarketManagerGetProcessor extends modObjectGetProcessor
 {
     public $objectType = 'msVKMarketItem';
     public $classKey = 'msVKMarketItem';
@@ -23,4 +23,4 @@ class msVKMarketItemGetProcessor extends modObjectGetProcessor
 
 }
 
-return 'msVKMarketItemGetProcessor';
+return 'msVKMarketManagerGetProcessor';

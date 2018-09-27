@@ -11,6 +11,15 @@ $_lang['msvkmarket_item_id'] = 'Id';
 $_lang['msvkmarket_item_name'] = 'Название';
 $_lang['msvkmarket_item_description'] = 'Описание';
 $_lang['msvkmarket_item_active'] = 'Активно';
+$_lang['msvkmarket_item_detailed_import'] = 'Подробная синхронизация';
+$_lang['msvkmarket_item_fast_import'] = 'Быстрая синхронизация';
+$_lang['msvkmarket_items_import_start'] = 'Импорт начат';
+$_lang['msvkmarket_items_import_end'] = 'Импорт завершен';
+
+$_lang['msvkmarke_process_log'] = '[[+step]]/[[+count]]  [[[+left]]] - ([[+id]]) | [[+action]] [[+pagetitle]]';
+$_lang['msvkmarket_items_import_add'] = '<i class="icon icon-plus" title="Добавлен"></i>';
+$_lang['msvkmarket_items_import_upd'] = '<i class="icon icon-refresh" title="Обновлен"></i>';
+$_lang['msvkmarket_items_import_skp'] = '<i class="icon icon-low-vision red" title="Позиция пропущенна, см. опция msvkm_default_ststus"></i>';
 
 $_lang['msvkmarket_export'] = 'Экспорт';
 $_lang['msvkmarket_groups'] = 'Группы';
