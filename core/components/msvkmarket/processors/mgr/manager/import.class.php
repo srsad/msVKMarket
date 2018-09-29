@@ -23,6 +23,7 @@ class msVKMarketManagerImportProcessor extends modProcessor
         $category_id = !empty($this->getProperty('category_id')) ? trim($this->getProperty('category_id')) : $this->modx->getOption('msvkm_default_category');
         $status      = $this->getProperty('status') === 'true' ? 1 : 0;
         $description = '';
+        $msg = '';
 
         if (empty($ids[0])) {
             $msg      = $this->modx->lexicon('msvkmarket_items_import_end');
@@ -42,8 +43,6 @@ class msVKMarketManagerImportProcessor extends modProcessor
         $p_option['image']     = $p_res->get('image');
         $p_option['published'] = $p_res->get('published');
         $p_option['deleted']   = $p_res->get('deleted');
-
-        //$this->modx->log(1, print_r($p_option, true));
 
         // получем и формируем описания
         $description_array = $this->modx->getOption('msvkm_description_json');
@@ -65,14 +64,21 @@ class msVKMarketManagerImportProcessor extends modProcessor
             }
         }
 
+        $description = strip_tags($description);
+
         if (empty($description) || strlen($description) < 11) {
             $description = $description . "\n" . $link;
-        } else {
-            $link = $this->modx->getOption('msvkm_goods_link');
-            if ($link == true) {
-                $description = $description . "\n" . $link;
-            }
+        } elseif (strlen($description . $link) > 755) {
+            /**
+             * почемут больше 755 символов не проходит, хотя в документауии про ограничения на символы ничего нет
+             * например тут https://vk.com/dev/market.add - см. `description`
+             */
+            $description = mb_substr($description, 0, 750-strlen($link));
+            $description = $description . '... ' . "\n" . $link;
         }
+
+        $link = $this->modx->getOption('msvkm_goods_link');
+        if ($link == true) { $description = $description . "\n" . $link; }
 
         $p_option['description'] = $description;
 
@@ -84,6 +90,7 @@ class msVKMarketManagerImportProcessor extends modProcessor
             $action = $this->modx->lexicon('msvkmarket_items_import_upd');
             // была ли она ранее в данной группе
             // тут процесс импорта - обновление
+            // todo продолжить отсюда, добавление работает, но нужно потом поработать с подборками и альбомами
             //$this->updItem();
 
         } else {
@@ -93,7 +100,15 @@ class msVKMarketManagerImportProcessor extends modProcessor
             } else {
                 // тут процесс импорта
                 foreach(explode(',', $id_groups) as $id_group){
-                    $this->addItem($p_option, $id_group, $albums_id, $category_id);
+                    $addItem = json_decode($this->addItem($p_option, $id_group, $albums_id, $category_id), true);
+                    $msg .= $this->modx->lexicon('msvkmarke_process_log', array(
+                        'step' => ($step + 1),
+                        'count' => $count,
+                        'left' => ($count - ($step + 1)),
+                        'id' => $ids[0],
+                        'action' => $action,
+                        'pagetitle' => $p_option['pagetitle'] . $addItem['result']
+                    ));
                 }
             }
 
@@ -101,6 +116,7 @@ class msVKMarketManagerImportProcessor extends modProcessor
 
         //$this->modx->log(1, print_r($this->modx->getOption('msvkm_default_ststus'), true));
 
+        /*
         $msg = $this->modx->lexicon('msvkmarke_process_log', array(
             'step' => ($step + 1),
             'count' => $count,
@@ -109,8 +125,7 @@ class msVKMarketManagerImportProcessor extends modProcessor
             'action' => $action,
             'pagetitle' => $p_option['pagetitle']
         ));
-
-        //
+        */
 
         $continue = true;
         $level    = xPDO::LOG_LEVEL_INFO;

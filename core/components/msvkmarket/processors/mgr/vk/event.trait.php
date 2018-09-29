@@ -4,6 +4,7 @@ include_once(MODX_CORE_PATH . 'components/msvkmarket/libs/VKException.php');
 
 trait msVKMarketVKEventTrait
 {
+    public $languageTopics = ['msvkmarket'];
 
     public function testTrait()
     {
@@ -333,6 +334,7 @@ trait msVKMarketVKEventTrait
      */
     public function addItem(array $item, $id_group, array $albums_id, $category_id)
     {
+        $msg = '';
 
         $groups_param   = $this->getGroupParam($id_group);
         if ($groups_param === false && empty($album_id)) {
@@ -357,7 +359,15 @@ trait msVKMarketVKEventTrait
         }
 
         // тут импорт
-        $this->vkImport($item, $id_group, 'market.add');
+        $vk_import = $this->vkImport($item, $groups_param, 'market.add');
+
+        if ($vk_import['success'] === true && !empty($vk_import['result']) && !empty($vk_import['main_photo_id'])){
+            $this->setProducts($item, $groups_param, $vk_import);
+        } elseif (empty($vk_import['result'])) {
+            $msg = ' - <span class="red"> ' . $this->modx->lexicon('msvkmarket_el_empty_item_id') . ' </span>';
+        } else {
+            $msg = ' - <span class="red"> ' . $vk_import['result'] . ' </span>';
+        }
 
         //$this->modx->log(1, print_r($import, true));
         //$this->modx->log(1, print_r($groups_param, true));
@@ -366,7 +376,7 @@ trait msVKMarketVKEventTrait
 
         return json_encode(array(
             'success' => true,
-            'result' => 'msg'
+            'result' => $msg
         ));
     }
 
@@ -394,14 +404,13 @@ trait msVKMarketVKEventTrait
     /**
      * Импорт, в качестве ответа возвращает статус
      *
-     * todo продолжить отсюда, работаем над импотром и этот метод не работает
-     *
-     * @param array $group
      * @param array $item
+     * @param array $group
      * @param $action - market.add/market.edit
      * @return array
      */
-    public function vkImport(array $group, array $item, $action){
+    public function vkImport($item, $group, $action){
+
         if ((!is_array($group) && count($group) == 0) && (!is_array($item) && count($item) == 0)) {
             $this->modx->log(1, '[msVKMarket] Параметры группы или товара не переданы! ' . __METHOD__);
             return array(
@@ -427,15 +436,14 @@ trait msVKMarketVKEventTrait
         try {
             $vk = new VK\VK($app_id, $api_secret, $access_token);
             $vk->setApiVersion('5.59');
-        }
-        catch (VK\VKException $error) {
+        } catch (VK\VKException $error) {
             $this->modx->log(1, '[msVKMarket] Ошибка при продключении к vk!');
             return array(
                 'success' => false
             );
         }
 
-        if ($this->modx->getOption('msvkm_synk_image_update') == false && array_key_exists('main_photo_id', $item)) {
+        if ($this->modx->getOption('msvkm_synk_image_update') == false && @array_key_exists('main_photo_id', $item)) {
             $goods_options['main_photo_id'] = $item['main_photo_id'];
         } else {
             usleep($this->modx->getOption('msvkm_delay'));
@@ -448,18 +456,22 @@ trait msVKMarketVKEventTrait
             if (isset($up_server['error'])) {
                 $this->modx->log(1, print_r($up_server, 1));
                 return array(
-                    'success' => false
+                    'success' => false,
+                    'result' => $up_server
                 );
             }
+
             $server = $up_server['response']['upload_url'];
             // обрезаем фотографию
-            $img    = $this->imagePath($product['image']);
+            $img = $this->imagePath($product['image']);
             if ($img['success'] == false) {
                 $this->modx->log(1, $img['result']);
                 return array(
                     'success' => false
                 );
             }
+
+            //$this->modx->log(1, print_r($img, true));
 
             // загружаем и сохраняем
             $up_img     = $this->imgUpload($server, $img['result']);
@@ -473,7 +485,6 @@ trait msVKMarketVKEventTrait
             ));
 
             if (isset($save_image['error'])) {
-                $this->modx->log(1, 'Ошибка сохранения фотографии: ' . print_r($save_image['error'], 1));
                 return array(
                     'success' => false,
                     'result' => $this->modx->lexicon('msvkm_log_synk_error_save_thumb')
@@ -482,7 +493,7 @@ trait msVKMarketVKEventTrait
             $goods_options['main_photo_id'] = $save_image["response"][0]["id"];
         }
 
-        // создаем позицию
+        // параметры
         $goods_options['owner_id']    = '-' . $group_id;
         $goods_options['name']        = $product['pagetitle'];
         $goods_options['price']       = $product['price'] != 0 ? $product['price'] : 1;
@@ -495,12 +506,24 @@ trait msVKMarketVKEventTrait
         }
 
         $import_goods = $vk->api($action, $goods_options);
+
         if (isset($import_goods['error'])) {
             return array(
                 'success' => false,
                 'result' => $import_goods['error']['error_msg']
             );
         }
+
+        /*
+        if (empty($import_goods['response']['market_item_id'])) {
+            $this->modx->log(1, $this->modx->lexicone('msvkmarket_el_empty_item_id'));
+            $this->modx->log(1, print_r($import_goods, true));
+            return array(
+                'success' => false,
+                'result' => $this->modx->lexicone('msvkmarket_el_empty_item_id')
+            );
+        }
+        */
 
         // если создание и есть подборки
         if ($action === 'market.add' && !empty($product['album_ids'])) {
@@ -665,14 +688,59 @@ trait msVKMarketVKEventTrait
 
 
     /**
+     * Загрузка картинки
+     *
+     * @param $server
+     * @param $file
+     * @param string $mime
+     * @return mixed
+     */
+    private function imgUpload($server, $file, $mime = 'text/plain')
+    {
+        // Для поддержки старых версий PHP
+        if (!function_exists('curl_file_create')) {
+            function curl_file_create($filename, $mimetype = '', $postname = '')
+            {
+                if (file_exists($filename)) {
+                    return "@$filename;filename=" . ($postname ?: basename($filename)) . ($mimetype ? ';type=text/plain' : '');
+                } else {
+                    $this->modx->log(1, '[msVKMarket] Error! File ' . $filename . ' not found!');
+                    exit('Error! File ' . $filename . ' not found!');
+                }
+            }
+        }
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $server);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, array(
+            'file' => curl_file_create($file, $mime, basename($file))
+        ));
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
+        $headers   = array();
+        $headers[] = 'Content-Type: multipart/form-data';
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        $result = json_decode(curl_exec($ch), true);
+        if (curl_errno($ch) && !empty($result['error'])) {
+            $this->modx->log(1, '[msVKMarket] ошибка при curl загрузке изображения:' . curl_error($ch));
+        }
+        curl_close($ch);
+
+        return $result;
+    }
+
+
+    /**
      * Запись данных в бд
      *
-     * @param array $group_array - параметры группы
      * @param array $product_array - параметры позиции
+     * @param array $group_array - параметры группы
      * @param array $import_result - ответ vk
      * @return array
      */
-    public function setProducts(array $group_array, array $product_array, array $import_result)
+    public function setProducts($product_array, $group_array, $import_result)
     {
         $error = array();
 
