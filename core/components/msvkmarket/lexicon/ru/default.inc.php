@@ -118,3 +118,10 @@ $_lang['msvkmarket_error_response'] = 'Ошибка разбора ответа'
 $_lang['msvkmarket_console_start'] = 'Консоль запущенна';
 $_lang['msvkmarket_console_end'] = 'Конец';
 
+
+// _el_ - error log
+$_lang['msvkmarket_el_empty_item_id'] = 'Отстствует market_item_id в ответе, не удалось импортировать позицию!';
+
+
+
+
