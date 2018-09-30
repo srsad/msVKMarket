@@ -369,11 +369,6 @@ trait msVKMarketVKEventTrait
             $msg = ' - <span class="red"> ' . $vk_import['result'] . ' </span>';
         }
 
-        //$this->modx->log(1, print_r($import, true));
-        //$this->modx->log(1, print_r($groups_param, true));
-        //$this->modx->log(1, print_r($album_id, true));
-        //$this->modx->log(1, print_r($category_id, true));
-
         return json_encode(array(
             'success' => true,
             'result' => $msg
@@ -387,16 +382,48 @@ trait msVKMarketVKEventTrait
      * @param $id_group - id группы
      * @param $albums_id - id альбома
      * @param $category_id - id категории, список https://vk.com/dev/market.getCategories?params[count]=100&params[v]=5.85
+     * @param $action - market.add/market.edit
      * @return string
      */
-    public function updItem(array $item, $id_group, $albums_id, $category_id)
+    public function importItem($item, $id_group, $albums_id, $category_id, $action)
     {
+        $msg = '';
+        $groups_param   = $this->getGroupParam($id_group);
+        if ($groups_param === false && empty($album_id)) {
+            return json_encode(array(
+                'success' => false,
+                'result' => $this->modx->lexicon('msvkmarket_compilation_creat_albom_error_id')
+            ));
+        }
 
-        $this->modx->log(1, 'update item');
+        //
+        if (!empty($groups_param['compilation']) && count($albums_id) > 0) {
+            $compilation_id = '';
+            $album_id       = '';
+            foreach ($groups_param['compilation'] as $key => $val) {
+                if (in_array($key, $albums_id)) {
+                    $compilation_id .= $key . ',';
+                    $album_id .= $val . ',';
+                }
+            }
+            $item['compilation_id'] = substr($compilation_id, 0, -1);
+            $item['album_ids']      = substr($album_id, 0, -1);
+        }
+
+        // тут импорт
+        $vk_import = $this->vkImport($item, $groups_param, $action);
+
+        if ($vk_import['success'] === true && !empty($vk_import['result']) && !empty($vk_import['main_photo_id'])){
+            $this->setProducts($item, $groups_param, $vk_import);
+        } elseif (empty($vk_import['result'])) {
+            $msg = ' - <span class="red"> ' . $this->modx->lexicon('msvkmarket_el_empty_item_id') . ' </span>';
+        } else {
+            $msg = ' - <span class="red"> ' . $vk_import['result'] . ' </span>';
+        }
 
         return json_encode(array(
             'success' => true,
-            'result' => 'msg'
+            'result' => $msg
         ));
     }
 
@@ -513,6 +540,10 @@ trait msVKMarketVKEventTrait
                 'result' => $import_goods['error']['error_msg']
             );
         }
+
+        // todo продолжить отсюда, нужно поработать обновлениями с подборками и альбомами
+        $this->modx->log(1, print_r($goods_options, true));
+        $this->modx->log(1, print_r($import_goods, true));
 
         /*
         if (empty($import_goods['response']['market_item_id'])) {

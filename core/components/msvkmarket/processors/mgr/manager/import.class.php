@@ -22,8 +22,10 @@ class msVKMarketManagerImportProcessor extends modProcessor
         $albums_id   = explode(',', trim($this->getProperty('album_id')));
         $category_id = !empty($this->getProperty('category_id')) ? trim($this->getProperty('category_id')) : $this->modx->getOption('msvkm_default_category');
         $status      = $this->getProperty('status') === 'true' ? 1 : 0;
+        $method      = 'market.add';
         $description = '';
         $msg = '';
+
 
         if (empty($ids[0])) {
             $msg      = $this->modx->lexicon('msvkmarket_items_import_end');
@@ -65,7 +67,6 @@ class msVKMarketManagerImportProcessor extends modProcessor
         }
 
         $description = strip_tags($description);
-
         if (empty($description) || strlen($description) < 11) {
             $description = $description . "\n" . $link;
         } elseif (strlen($description . $link) > 755) {
@@ -73,13 +74,11 @@ class msVKMarketManagerImportProcessor extends modProcessor
              * почемут больше 755 символов не проходит, хотя в документауии про ограничения на символы ничего нет
              * например тут https://vk.com/dev/market.add - см. `description`
              */
-            $description = mb_substr($description, 0, 750-strlen($link));
-            $description = $description . '... ' . "\n" . $link;
+            $description = mb_substr($description, 0, 750-strlen($link)) . '... ';
         }
 
-        $link = $this->modx->getOption('msvkm_goods_link');
-        if ($link == true) { $description = $description . "\n" . $link; }
-
+        $goods_link = $this->modx->getOption('msvkm_goods_link');
+        if ($goods_link == true) { $description = $description . "\n" . $link; }
         $p_option['description'] = $description;
 
         // была ли ранее импортированна позиция
@@ -88,44 +87,58 @@ class msVKMarketManagerImportProcessor extends modProcessor
         if (is_object($product) && $product->get('product_id')) {
             $p_option['status'] = $product->get('product_status');
             $action = $this->modx->lexicon('msvkmarket_items_import_upd');
-            // была ли она ранее в данной группе
-            // тут процесс импорта - обновление
-            // todo продолжить отсюда, добавление работает, но нужно потом поработать с подборками и альбомами
-            //$this->updItem();
-
+            $method = 'market.edit';
         } else {
             // статус для раннее не импортированных позици по умолчанию
-            if ($this->modx->getOption('msvkm_default_ststus') == false) {
-                $action = $this->modx->lexicon('msvkmarket_items_import_skp');
-            } else {
-                // тут процесс импорта
-                foreach(explode(',', $id_groups) as $id_group){
-                    $addItem = json_decode($this->addItem($p_option, $id_group, $albums_id, $category_id), true);
-                    $msg .= $this->modx->lexicon('msvkmarke_process_log', array(
-                        'step' => ($step + 1),
-                        'count' => $count,
-                        'left' => ($count - ($step + 1)),
-                        'id' => $ids[0],
-                        'action' => $action,
-                        'pagetitle' => $p_option['pagetitle'] . $addItem['result']
-                    ));
-                }
-            }
-
+            $p_option['status'] = $this->modx->getOption('msvkm_default_ststus');
         }
 
-        //$this->modx->log(1, print_r($this->modx->getOption('msvkm_default_ststus'), true));
+        // тут процесс импорта - обновление
+        // todo продолжить отсюда, добавление работает, но нужно потом поработать обновлениями с подборками и альбомами
 
-        /*
-        $msg = $this->modx->lexicon('msvkmarke_process_log', array(
-            'step' => ($step + 1),
-            'count' => $count,
-            'left' => ($count - ($step + 1)),
-            'id' => $ids[0],
-            'action' => $action,
-            'pagetitle' => $p_option['pagetitle']
-        ));
-        */
+        if ($p_option['status'] == true){
+            // прогонка по группам
+            foreach(explode(',', $id_groups) as $id_group){
+                // была ли ранее импортированна позиция
+                // проверка есть ли эта позиция в этой группе
+                if ($method === 'market.edit'){
+                    // если да, то достаем ее owner_id
+                    // если нет, то делаем $method = 'market.edit'
+                    $product_categories = $this->modx->getObject('VkmProductCategories', array(
+                        'product_id' => $ids[0],
+                        'groups_id' => $id_group
+                    ));
+
+                    if (is_object($product_categories) && $product_categories->get('owner_id')) {
+                        $p_option['item_id'] = $product_categories->get('owner_id');
+                    } else {
+                        $method = 'market.add';
+                    }
+                }
+
+                $importItem = json_decode($this->importItem($p_option, $id_group, $albums_id, $category_id, $method), true);
+
+                $msg .= $this->modx->lexicon('msvkmarke_process_log', array(
+                    'step' => ($step + 1),
+                    'count' => $count,
+                    'left' => ($count - ($step + 1)),
+                    'id' => $ids[0],
+                    'action' => $action,
+                    'pagetitle' => $p_option['pagetitle'] . $importItem['result']
+                ));
+            }
+        } else {
+            $msg .= $this->modx->lexicon('msvkmarke_process_log', array(
+                'step' => ($step + 1),
+                'count' => $count,
+                'left' => ($count - ($step + 1)),
+                'id' => $ids[0],
+                'action' => $this->modx->lexicon('msvkmarket_items_import_skp'),
+                'pagetitle' => $p_option['pagetitle']
+            ));
+        }
+
+        $this->modx->log(1, $p_option['status']);
 
         $continue = true;
         $level    = xPDO::LOG_LEVEL_INFO;
