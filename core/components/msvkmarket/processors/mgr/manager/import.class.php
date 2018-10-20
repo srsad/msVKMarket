@@ -26,7 +26,6 @@ class msVKMarketManagerImportProcessor extends modProcessor
         $description = '';
         $msg = '';
 
-
         if (empty($ids[0])) {
             $msg      = $this->modx->lexicon('msvkmarket_items_import_end');
             $continue = false;
@@ -85,17 +84,24 @@ class msVKMarketManagerImportProcessor extends modProcessor
         /** @var xPDOObject $product */
         $product = $this->modx->getObject($this->classKey, $ids[0]);
         if (is_object($product) && $product->get('product_id')) {
-            $p_option['status'] = $product->get('product_status');
+            $p_option['status'] = $product->get('product_status'); // доступ к импорту
             $action = $this->modx->lexicon('msvkmarket_items_import_upd');
             $method = 'market.edit';
         } else {
-            // статус для раннее не импортированных позици по умолчанию
             $p_option['status'] = $this->modx->getOption('msvkm_default_ststus');
         }
 
-        // тут процесс импорта - обновление
-        // todo продолжить отсюда, добавление работает, но нужно потом поработать обновлениями с подборками и альбомами
+        // статус публикации в вк
+        // todo сдлать проверку при импорте на $p_option['status_vk'], сйчас это вроде как делается на $p_option['status']
+        if (!empty($this->getProperty('status'))) {
+            $p_option['status_vk'] = $status;
+        }
 
+        $this->modx->log(1, print_r($albums_id, true));
+        $this->modx->log(1, print_r($this->getProperties(), true));
+
+        // тут процесс импорта - обновление
+        // todo +++ продолжить отсюда, добавление работает, но нужно потом поработать обновлениями с подборками и альбомами
         if ($p_option['status'] == true){
             // прогонка по группам
             foreach(explode(',', $id_groups) as $id_group){
@@ -137,8 +143,6 @@ class msVKMarketManagerImportProcessor extends modProcessor
                 'pagetitle' => $p_option['pagetitle']
             ));
         }
-
-        $this->modx->log(1, $p_option['status']);
 
         $continue = true;
         $level    = xPDO::LOG_LEVEL_INFO;

@@ -108,7 +108,7 @@ msVKMarket.combo.CompilationSS = function (config) {
             //data: ['id', 'name', {id:'1', name: 'float'}, {id:'2', name:'date'}],
             url: msVKMarket.config.connector_url,
             baseParams: {
-                action: 'mgr/manager/gatcompilation',
+                action: 'mgr/compilation/getlist',
                 ids: config.groupIds != undefined ? config.groupIds : ''
             }
         }),

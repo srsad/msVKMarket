@@ -331,7 +331,7 @@ trait msVKMarketVKEventTrait
      * @param array $albums_id - id альбома
      * @param $category_id - id категории, список https://vk.com/dev/market.getCategories?params[count]=100&params[v]=5.85
      * @return string
-     */
+     *
     public function addItem(array $item, $id_group, array $albums_id, $category_id)
     {
         $msg = '';
@@ -359,6 +359,7 @@ trait msVKMarketVKEventTrait
         }
 
         // тут импорт
+        // todo
         $vk_import = $this->vkImport($item, $groups_param, 'market.add');
 
         if ($vk_import['success'] === true && !empty($vk_import['result']) && !empty($vk_import['main_photo_id'])){
@@ -374,6 +375,8 @@ trait msVKMarketVKEventTrait
             'result' => $msg
         ));
     }
+    */
+
 
     /**
      * Обновление
@@ -396,7 +399,6 @@ trait msVKMarketVKEventTrait
             ));
         }
 
-        //
         if (!empty($groups_param['compilation']) && count($albums_id) > 0) {
             $compilation_id = '';
             $album_id       = '';
@@ -410,16 +412,24 @@ trait msVKMarketVKEventTrait
             $item['album_ids']      = substr($album_id, 0, -1);
         }
 
-        // тут импорт
         $vk_import = $this->vkImport($item, $groups_param, $action);
 
-        if ($vk_import['success'] === true && !empty($vk_import['result']) && !empty($vk_import['main_photo_id'])){
-            $this->setProducts($item, $groups_param, $vk_import);
-        } elseif (empty($vk_import['result'])) {
-            $msg = ' - <span class="red"> ' . $this->modx->lexicon('msvkmarket_el_empty_item_id') . ' </span>';
-        } else {
-            $msg = ' - <span class="red"> ' . $vk_import['result'] . ' </span>';
+        if ($action === 'market.add') {
+            if ($vk_import['success'] === true && !empty($vk_import['result']) && !empty($vk_import['main_photo_id'])){
+                $this->setProducts($item, $groups_param, $vk_import);
+            } elseif (empty($vk_import['result'])) {
+                $msg = ' - <span class="red"> ' . $this->modx->lexicon('msvkmarket_el_empty_item_id') . ' </span>';
+            } else {
+                $msg = ' - <span class="red"> ' . $vk_import['result'] . ' </span>';
+            }
+        }else{
+            if ($vk_import['success'] === true) {
+                $this->setProducts($item, $groups_param, $vk_import);
+            } else {
+                $msg = ' - <span class="red"> ' . $this->modx->lexicon('msvkmarket_err_el_upd') . ' </span>';
+            }
         }
+
 
         return json_encode(array(
             'success' => true,
@@ -439,13 +449,18 @@ trait msVKMarketVKEventTrait
     public function vkImport($item, $group, $action){
 
         if ((!is_array($group) && count($group) == 0) && (!is_array($item) && count($item) == 0)) {
-            $this->modx->log(1, '[msVKMarket] Параметры группы или товара не переданы! ' . __METHOD__);
+            $this->modx->log(1, $this->modx->lexicon('msvkmarket_error_not_options', array(
+                'method' => __METHOD__
+            )));
             return array(
                 'success' => false
             );
         }
+
         if (empty($action)) {
-            $this->modx->log(1, '[msVKMarket] Не переданно действие! ' . __METHOD__);
+            $this->modx->log(1, $this->modx->lexicon('msvkmarket_err_not_action', array(
+                'method' => __METHOD__
+            )));
             return array(
                 'success' => false
             );
@@ -464,7 +479,7 @@ trait msVKMarketVKEventTrait
             $vk = new VK\VK($app_id, $api_secret, $access_token);
             $vk->setApiVersion('5.59');
         } catch (VK\VKException $error) {
-            $this->modx->log(1, '[msVKMarket] Ошибка при продключении к vk!');
+            $this->modx->log(1, $this->modx->lexicon('msvkmarket_err_vk_connect'));
             return array(
                 'success' => false
             );
@@ -497,8 +512,6 @@ trait msVKMarketVKEventTrait
                     'success' => false
                 );
             }
-
-            //$this->modx->log(1, print_r($img, true));
 
             // загружаем и сохраняем
             $up_img     = $this->imgUpload($server, $img['result']);
@@ -541,11 +554,7 @@ trait msVKMarketVKEventTrait
             );
         }
 
-        // todo продолжить отсюда, нужно поработать обновлениями с подборками и альбомами
-        $this->modx->log(1, print_r($goods_options, true));
-        $this->modx->log(1, print_r($import_goods, true));
-
-        /*
+          /*
         if (empty($import_goods['response']['market_item_id'])) {
             $this->modx->log(1, $this->modx->lexicone('msvkmarket_el_empty_item_id'));
             $this->modx->log(1, print_r($import_goods, true));

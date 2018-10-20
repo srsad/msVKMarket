@@ -34,17 +34,14 @@ class msVKMarketGroupGetListProcessor extends modObjectGetListProcessor
     public function prepareQueryBeforeCount(xPDOQuery $c)
     {
         $query = trim($this->getProperty('query'));
+        $ids = trim($this->getProperty('ids'));
+        $ids = explode(',', $ids);
         $c->leftJoin('VkmGroups', 'VkmGroups', 'VkmCompilation.group_id = VkmGroups.id');
         $c->select('`VkmCompilation`.*, `VkmGroups`.`name` AS groupname');
-        $c->where([
-            'VkmGroups.status' => true
-        ]);
+        $c->where([ 'VkmGroups.status' => true ]);
 
-        if ($query) {
-            $c->where([
-                'name:LIKE' => "%{$query}%"
-            ]);
-        }
+        if (count($ids) < 0){$c->where(array('VkmCompilation.group_id:IN' => $ids));}
+        if ($query) {$c->where(['name:LIKE' => "%{$query}%"]);}
 
         return $c;
     }

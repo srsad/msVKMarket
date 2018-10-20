@@ -76,6 +76,19 @@ Ext.extend(msVKMarket.grid.Items, MODx.grid.Grid, {
 */
     detailedImport: function () {
         console.log('detailedExport');
+        // msvkmarket-item-windows-more-config-to-import
+        var w = MODx.load({
+            xtype: 'msvkmarket-item-windows-more-config-to-import',
+            id: Ext.id(),
+            listeners: {
+                success: {
+                    fn: function () {
+                        this.refresh();
+                    }, scope: this
+                }
+            }
+        });
+        w.show();
     },
 
     fastImport: function () {
@@ -139,9 +152,7 @@ Ext.extend(msVKMarket.grid.Items, MODx.grid.Grid, {
                         window.close();
                         grid.refresh();
                     });
-
                 }
-
             }
         );
         return true;
