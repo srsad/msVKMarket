@@ -41,7 +41,7 @@ Ext.extend(msVKMarket.combo.Search, Ext.form.TwinTriggerField, {
 
     _triggerClear: function () {
         this.fireEvent('clear', this);
-    },
+    }
 
 });
 Ext.reg('msvkmarket-combo-search', msVKMarket.combo.Search);

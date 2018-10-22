@@ -21,7 +21,8 @@ class msVKMarketManagerImportProcessor extends modProcessor
         $id_groups   = !empty($this->getProperty('id_group')) ? trim($this->getProperty('id_group')) : $this->modx->getOption('msvkm_default_group');
         $albums_id   = explode(',', trim($this->getProperty('album_id')));
         $category_id = !empty($this->getProperty('category_id')) ? trim($this->getProperty('category_id')) : $this->modx->getOption('msvkm_default_category');
-        $status      = $this->getProperty('status') === 'true' ? 1 : 0;
+        // статус товара в вк, (1 — товар удален/не опубликован, 0 — товар не удален/опубликован)
+        $status_vk   = $this->getProperty('status') === 'true' ? 0 : 1;
         $method      = 'market.add';
         $description = '';
         $msg = '';
@@ -92,21 +93,15 @@ class msVKMarketManagerImportProcessor extends modProcessor
         }
 
         // статус публикации в вк
-        // todo сдлать проверку при импорте на $p_option['status_vk'], сйчас это вроде как делается на $p_option['status']
         if (!empty($this->getProperty('status'))) {
-            $p_option['status_vk'] = $status;
+            $p_option['status_vk'] = $status_vk;
         }
 
-        $this->modx->log(1, print_r($albums_id, true));
-        $this->modx->log(1, print_r($this->getProperties(), true));
-
-        // тут процесс импорта - обновление
-        // todo +++ продолжить отсюда, добавление работает, но нужно потом поработать обновлениями с подборками и альбомами
+        // тут процесс импорта
         if ($p_option['status'] == true){
             // прогонка по группам
             foreach(explode(',', $id_groups) as $id_group){
-                // была ли ранее импортированна позиция
-                // проверка есть ли эта позиция в этой группе
+                // была ли ранее импортированна позиция + проверка есть ли эта позиция в этой группе
                 if ($method === 'market.edit'){
                     // если да, то достаем ее owner_id
                     // если нет, то делаем $method = 'market.edit'
@@ -148,6 +143,7 @@ class msVKMarketManagerImportProcessor extends modProcessor
         $level    = xPDO::LOG_LEVEL_INFO;
         return $this->prepareResponse(true, $msg, $level, $continue);
     }
+
 
     /**
      * @param $success

@@ -160,8 +160,8 @@ msVKMarket.window.MoreConfigToImport = function(config){
                 }
 
                 Ext.MessageBox.confirm(
-                    _('msvkm_manager_more_synk'),
-                    _('msvkm_manager_w_ms_desc'),
+                    _('msvkmarket_manager_more_import'),
+                    _('msvkmarket_manager_w_ms_desc'),
                     function(config){
                         if(config === 'yes'){
                             var w = new msVKMarket.window.Console({
