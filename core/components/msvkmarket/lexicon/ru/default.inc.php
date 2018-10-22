@@ -136,7 +136,9 @@ $_lang['msvkmarket_poehali'] = 'Поехали';
 
 // _el_ - error log
 $_lang['msvkmarket_el_empty_item_id'] = 'Отстствует market_item_id в ответе, не удалось импортировать позицию!';
-
+$_lang['msvkmarket_log_synk_error_save_thumb'] = 'Ошибка сохранения фотографии';
+$_lang['msvkmarket_manager_more_import'] = 'Подробнее';
+$_lang['msvkmarket_manager_w_ms_desc'] = 'Позиция добавиться в новую группу если в ней ранее не состояла, но при этом не будет удаляться из той группы в которой уже состоит!';
 
 /**
  * category
